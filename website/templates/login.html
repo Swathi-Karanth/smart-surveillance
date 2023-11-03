@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- {% if user.is_authenticated %}
+{% include 'home.html' %}
+{% else %} -->
+{% load static %}
+
+<style>
+  body {
+    background-image: url('{% static "login/sky_and_clouds.jpg"%}');
+    background-repeat: no-repeat;
+    background-attachment: auto;
+    background-size: 100%;
+  }
+</style>
+
+{% comment %} <body background = "{% static "sky_and_clouds.jpg" %}"> {% endcomment %}
+<body>
+            
+<p>
+<div class="col-md-6 offset-md-3"> 
+<br/>
+
+<form method="POST" action="{% url 'login' %}">
+	{% csrf_token %}
+
+    <section class="vh-400" style="background-color:#AA98A9;">
+        <div class="container py-5 h-300">
+          <div class="row d-flex justify-content-center align-items-center h-300">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+              <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                <div class="card-body p-5 text-center" >
+      
+                  <h3 class="mb-5">Sign in</h3>
+      
+                  <div class="form-outline mb-4">
+                    <label class="form-label" for="username">Username</label>
+                    <input type="text" name="username" class="form-control form-control-lg" required autocomplete=True />
+                    
+                  </div>
+      
+                  <div class="form-outline mb-4">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" name="password" class="form-control form-control-lg" required />
+                    
+                  </div>
+      
+          
+                  <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
+      
+                  <hr class="my-4">
+      
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+<br/>
+ 
+</form>
+
+</div>
+
+</p>
+</body>
+{% endif %}
+{% endblock %}
+

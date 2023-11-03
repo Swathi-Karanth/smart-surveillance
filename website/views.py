@@ -1,0 +1,289 @@
+from pickle import GET, NONE
+from django.shortcuts import render, redirect
+from django.db import connection
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from .forms import AddRecordForm_staff, LoginForm, SignUpForm, AddRecordForm,AddRecordForm_role,addrecord_visitor
+from .models import EMERGENCY_CONTACTS, Record, staff_master,visitor_ledger,incidents,staff_master_view
+from .models import Roles
+from .forms import AddRecordForm,LoginForm,addincidents_form
+from django.contrib.auth.models import User
+from django.http import HttpResponseForbidden
+
+links = [
+    {'ec': 'e_contact', 'url': '/e_contact/'},
+    {'r': 'roles_list', 'url': '/roles_list/'},
+	{'s': 'staff', 'url': '/staff/'},
+	{'v': 'visitor', 'url': '/visitor_ledger/'},
+	{'i': 'incident', 'url': '/incidents/'},
+    # Add more links as needed
+]
+
+def login_user(request):
+	if request.user.is_authenticated== False:
+	
+		if request.method =="POST":
+			username = request.POST['username']
+			password = request.POST['password']
+			user = authenticate(request,username = username,password = password)
+			if user is not None:
+				login(request,user)
+				messages.success(request,"Logged In Successfully")
+				return redirect('home')
+			else:
+				messages.success(request,"Error logging in, Try Again")
+				return redirect('login')
+				
+		else:
+			return render(request,'login.html',{})
+	else:
+			# return render(request,'home.html',{})
+			return redirect('home')
+
+
+def home(request):
+	return render(request, 'home.html', {'links': request.role_links})
+
+
+
+def logout_user(request):
+	logout(request)
+	messages.success(request, "You Have Been Logged Out...")
+	return redirect('login')
+
+
+def register_user(request):
+	if request.method == 'POST':
+		form = SignUpForm(request.POST)
+		if form.is_valid():
+			form.save()
+			# Authenticate and login
+			username = form.cleaned_data['username']
+			password = form.cleaned_data['password1']
+			user = authenticate(username=username, password=password)
+			login(request, user)
+			messages.success(request, "You Have Successfully Registered! Welcome!")
+			return redirect('home')
+	else:
+		form = SignUpForm()
+		return render(request, 'register.html', {'form':form})
+
+	return render(request, 'register.html', {'form':form})
+
+
+def e_contact(request):
+	# records = EMERGENCY_CONTACTS.objects.all()
+	# print(records)
+	# return render(request,'e_contact.html',{'records':records})
+	with connection.cursor() as cursor:
+		cursor.execute("SELECT * FROM EMERGENCY_CONTACTS")
+		r = cursor.fetchall()
+		records = []
+		for record in r:
+			data= {}
+			data["e_id"] = record[0]
+			data["type"] = record[1]
+			data["address"] = record[2]
+			data["contact_no"] = record[3]
+			data["google_map_link"] = record[4]
+			records.append(data)
+			# print(records)
+		return render(request,'e_contact.html',{'records':records})
+	
+
+def customer_record(request, pk):
+	if request.user.is_authenticated:
+		# Look Up Records
+		customer_record = EMERGENCY_CONTACTS.objects.get(id=pk)
+		return render(request, 'record.html', {'customer_record':customer_record})
+	else:
+		messages.success(request, "You Must Be Logged In To View That Page...")
+		return redirect('home')
+
+
+
+def delete_record(request, pk):
+	if request.user.is_authenticated:
+		delete_it = EMERGENCY_CONTACTS.objects.get(id=pk)
+		delete_it.delete()
+		messages.success(request, "Record Deleted Successfully...")
+		return redirect('home')
+	else:
+		messages.success(request, "You Must Be Logged In To Do That...")
+		return redirect('home')
+
+
+def add_record(request):
+	form = AddRecordForm(request.POST or None)
+	if request.user.is_authenticated:
+		if request.method == "POST":
+			if form.is_valid():
+				add_record = form.save()
+				messages.success(request, "Record Added...")
+				return redirect('home')
+		return render(request, 'add_record.html', {'form':form})
+	else:
+		messages.success(request, "You Must Be Logged In...")
+		return redirect('home')
+
+
+def update_record(request, pk):
+	if request.user.is_authenticated:
+		current_record = Record.objects.get(id=pk)
+		form = AddRecordForm(request.POST or None, instance=current_record)
+		if form.is_valid():
+			form.save()
+			messages.success(request, "Record Has Been Updated!")
+			return redirect('home')
+		return render(request, 'update_record.html', {'form':form})
+	else:
+		messages.success(request, "You Must Be Logged In...")
+		return redirect('home')
+
+def roles_list(request):
+	# records = Roles.objects.all()
+	# return render(request,'roles.html',{'records':records})
+	with connection.cursor() as cursor:
+		cursor.execute("SELECT * FROM roles")
+		r = cursor.fetchall()
+		records = []
+		for record in r:
+			data= {}
+			data["role_id"] = record[0]
+			data["role_name"] = record[1]
+			records.append(data)
+		return render(request,'roles.html',{'records':records})
+	
+
+def add_contacts(request):
+	return render(request,'add_contacts.html',{'form':AddRecordForm})
+
+def update_contacts(request,pk):
+	if request.method=='GET':
+		record = EMERGENCY_CONTACTS.objects.get(e_id=pk)
+		form = AddRecordForm(request.POST or None,instance=record)
+		return render(request,'update_contacts.html',{'form':form,'pk':pk})
+	else:
+		record = EMERGENCY_CONTACTS.objects.get(e_id=pk)
+		form = AddRecordForm(request.POST,instance=record)
+		if form.is_valid():
+			form.save()
+			return redirect('e_contact')
+
+def staff(request):
+	records = staff_master_view.objects.all()
+	print(records)
+	return render(request,'staff.html',{'records':records})
+	
+def update_staff(request, pk):
+	if request.method=='GET':
+		record = staff_master.objects.get(STAFF_ID=pk)
+		form = AddRecordForm_staff(request.POST or None,instance=record)
+		return render(request,'update_staff.html',{'form':form,'pk':pk})
+	else:
+		record = staff_master.objects.get(STAFF_ID=pk)
+		form = AddRecordForm_staff(request.POST,instance=record)
+		if form.is_valid():
+			form.save()
+			return redirect('staff')
+
+def add_staff(request):
+	form = AddRecordForm_staff(request.POST or None)
+	if request.user.is_authenticated:
+		if request.method == "POST":
+			if form.is_valid():
+				add_record = form.save()
+				messages.success(request, "Record Added...")
+				record = staff_master.objects.get(pk=add_record.pk)  # You might need to adjust the condition
+				column1_value = record.STAFF_NAME
+				column2_value = record.PASSWORD
+				column3_value = record.STAFF_ROLE
+				user = User.objects.create_user(username=column1_value, password=column2_value)
+				user.save()
+				return redirect('home')
+		return render(request, 'add_record.html', {'form':form})
+	else:
+		messages.success(request, "You Must Be Logged In...")
+		return redirect('home')
+
+
+def add_role(request):
+	form = AddRecordForm_role(request.POST or None)
+	if request.user.is_authenticated:
+		if request.method == "POST":
+			if form.is_valid():
+				add_record = form.save()
+				messages.success(request, "Record Added...")
+				return redirect('home')
+		return render(request, 'add_role.html', {'form':form})
+	else:
+		messages.success(request, "You Must Be Logged In...")
+		return redirect('home')
+
+def visitor(request):
+	records = visitor_ledger.objects.all()
+	print(records)
+	return render(request,'visitor_ledger.html',{'records':records})
+
+def add_visitor(request):
+	form = addrecord_visitor(request.POST or None)
+	if request.user.is_authenticated:
+		if request.method == "POST":
+			if form.is_valid():
+				add_record = form.save()
+				messages.success(request, "Record Added...")
+				return redirect('home')
+		return render(request, 'add_visitor.html', {'form':form})
+	else:
+		messages.success(request, "You Must Be Logged In...")
+		return redirect('home')
+
+def incident(request):
+	records = incidents.objects.all()
+	print(records)
+	return render(request,'incidents.html',{'records':records})
+
+def add_incidents(request):
+	form = addincidents_form(request.POST or None)
+	if request.user.is_authenticated:
+		if request.method == "POST":
+			if form.is_valid():
+				add_record = form.save()
+				messages.success(request, "Record Added...")
+				return redirect('home')
+		return render(request, 'add_incidents.html', {'form':form})
+	else:
+		messages.success(request, "You Must Be Logged In...")
+		return redirect('home')
+def update_incidents(request, pk):
+	if request.method=='GET':
+		record = staff_master.objects.get(INCIDENT=pk)
+		form = AddRecordForm_staff(request.POST or None,instance=record)
+		return render(request,'update_incidents.html',{'form':form,'pk':pk})
+	else:
+		record = staff_master.objects.get(INCIDENT=pk)
+		form = AddRecordForm_staff(request.POST,instance=record)
+		if form.is_valid():
+			form.save()
+			return redirect('staff')
+	
+def delete_staff(request, pk):
+	if request.user.is_authenticated:
+		delete_it = staff_master.objects.get(STAFF_ID=pk)
+		delete_it.delete()
+		messages.success(request, "Record Deleted Successfully...")
+		return redirect('home')
+	else:
+		messages.success(request, "You Must Be Logged In To Do That...")
+		return redirect('home')
+
+def delete_visitor(request, pk):
+	if request.user.is_authenticated:
+		delete_it = visitor_ledger.objects.get(VISITOR_ID=pk)
+		delete_it.delete()
+		messages.success(request, "Record Deleted Successfully...")
+		return redirect('home')
+	else:
+		messages.success(request, "You Must Be Logged In To Do That...")
+		return redirect('home')
+
