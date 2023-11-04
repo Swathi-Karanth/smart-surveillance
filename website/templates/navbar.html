@@ -9,22 +9,21 @@
     <ul class="navbar-nav justify-content-right">
       {% if user.is_authenticated%}
 
-      <li class="dropdown nav-item">
-        <a class="btn btn-secondary dropdown-toggle nav-item" 
-        href="{% url 'home' %}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          Links</a>
-        <ul class="dropdown-menu nav-item">
+      <div class="dropdown nav-item">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: rgb(204, 127, 225);">Links</button>
+        <ul class="dropdown-menu">
           {% for link in links %}
-        <li class="nav-item">
-          <a class="nav-link" href="{{ link.url }}" style="color: rgb(204, 127, 225);">
-            {{ link.title }}    
-        </a></li>
-      {% endfor %}
+              <li class="nav-item"><a class="nav-link" href="{{ link.url }}" style="color: rgb(204, 127, 225);">{{ link.title }}</a></li>
+          {% endfor %}
         </ul>
+      </div> 
+      <li class="nav-item">
+      {% for link in links %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ link.url }}" style="color: rgb(204, 127, 225);">&nbsp;&nbsp;&nbsp;&nbsp;{{link.title}}</a>
       </li>
-
-
-      
+      {% endfor %}
+      </li>
 
       <li class="nav-item">
         <a class="nav-link" href="{% url 'logout' %}" style="color: rgb(204, 127, 225);">&nbsp;&nbsp;&nbsp;&nbsp;Logout</a>
@@ -35,6 +34,5 @@
       </li>
       {% endif %}
     </ul>
-   
   </div>
 </nav>

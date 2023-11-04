@@ -5,6 +5,12 @@
 
 
 {% if user.is_authenticated %}
+{% if user.is_staff %}
+<p>Logged in as admin.</p>
+{% else %}
+<p>Logged in as staff member.</p>
+{% endif %}
+ <p>Welcome {{user.username}}</p>
 
 <button type="button" class="btn btn-lg btn-info" 
 data-bs-trigger="hover focus"

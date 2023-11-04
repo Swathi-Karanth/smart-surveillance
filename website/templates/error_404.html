@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- {% if user.is_authenticated %}
+{% include 'home.html' %}
+{% else %} -->
+{% load static %}
+
+<style>
+  body {
+    background-image: url('{% static "login/sky_and_clouds.jpg"%}');
+    background-repeat: no-repeat;
+    background-attachment: auto;
+    background-size: 100%;
+  }
+</style>
+
+{% comment %} <body background = "{% static "sky_and_clouds.jpg" %}"> {% endcomment %}
+<body>
+<p> </p>
+</body>
+{% endif %}
+{% endblock %}
+

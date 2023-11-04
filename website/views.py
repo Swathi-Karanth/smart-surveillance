@@ -12,18 +12,22 @@ from django.http import HttpResponseForbidden
 
 
 links = [
-    {'ec': 'e_contact', 'url': '/e_contact/'},
-    {'r': 'roles_list', 'url': '/roles_list/'},
-	{'s': 'staff', 'url': '/staff/'},
-	{'v': 'visitor', 'url': '/visitor_ledger/'},
-	{'i': 'incident', 'url': '/incidents/'},
-	{'i': 'Cctv', 'url': '/cctv_page/'},
-	
+    {'ec': 'e_contact', 'title': 'Emergency Contacts','url': '/e_contact/'},
+	{'r': 'roles_list','title': 'Roles', 'url': '/roles_list/'},
+	{'s': 'staff','title': 'Staff', 'url': '/staff/'},
+	{'v': 'visitor','title': 'Visitor Log', 'url': '/visitor_ledger/'},
+	{'i': 'incident','title': 'Incident History', 'url': '/incidents/'},
+	{'c': 'cctv','title': 'CCTV Footages', 'url': '/cctv_page/'},
+	{'p': 'error_404','title': 'ERROR 404: Page Not Found', 'url': '/error_404/'},
+
     # Add more links as needed
 ]
 
+def error_404(request):
+	return render(request, 'error_404.html', {})
+
 def login_user(request):
-	if request.user.is_authenticated== False:
+	if request.user.is_authenticated == False:
 	
 		if request.method =="POST":
 			username = request.POST['username']
@@ -34,7 +38,7 @@ def login_user(request):
 				messages.success(request,"Logged In Successfully")
 				return redirect('home')
 			else:
-				messages.success(request,"Error logging in, Try Again")
+				messages.success(request,"Error logging in, Try Again. If problem persists, contact admin.")
 				return redirect('login')
 				
 		else:
@@ -45,15 +49,18 @@ def login_user(request):
 
 
 def home(request):
-	return render(request, 'home.html', {'links': request.role_links})
+    if request.user.is_authenticated == True:
+        return render(request, 'home.html', {'links': request.role_links})
+    else:
+        return redirect('login')
 
 
 
 def logout_user(request):
 	logout(request)
 	messages.success(request, "You Have Been Logged Out...")
+	print(request.user, request.user.is_staff)	
 	return redirect('login')
-
 
 def register_user(request):
 	if request.method == 'POST':
@@ -78,20 +85,25 @@ def e_contact(request):
 	# records = EMERGENCY_CONTACTS.objects.all()
 	# print(records)
 	# return render(request,'e_contact.html',{'records':records})
-	with connection.cursor() as cursor:
-		cursor.execute("SELECT * FROM EMERGENCY_CONTACTS")
-		r = cursor.fetchall()
-		records = []
-		for record in r:
-			data= {}
-			data["e_id"] = record[0]
-			data["type"] = record[1]
-			data["address"] = record[2]
-			data["contact_no"] = record[3]
-			data["google_map_link"] = record[4]
-			records.append(data)
-			# print(records)
-		return render(request,'e_contact.html',{'records':records})
+	if request.user.is_authenticated and request.user.is_staff == 1:
+		with connection.cursor() as cursor:
+			cursor.execute("SELECT * FROM EMERGENCY_CONTACTS")
+			r = cursor.fetchall()
+			records = []
+			for record in r:
+				data= {}
+				data["e_id"] = record[0]
+				data["type"] = record[1]
+				data["address"] = record[2]
+				data["contact_no"] = record[3]
+				data["google_map_link"] = record[4]
+				records.append(data)
+				# print(records)
+			return render(request,'e_contact.html',{'records':records})
+
+	else:
+		messages.success(request, "Warning! Unauthorized Access")
+		return render(request,'error_404.html', {})
 	
 
 def customer_record(request, pk):
@@ -146,37 +158,53 @@ def update_record(request, pk):
 def roles_list(request):
 	# records = Roles.objects.all()
 	# return render(request,'roles.html',{'records':records})
-	with connection.cursor() as cursor:
-		cursor.execute("SELECT * FROM roles")
-		r = cursor.fetchall()
-		records = []
-		for record in r:
-			data= {}
-			data["role_id"] = record[0]
-			data["role_name"] = record[1]
-			records.append(data)
-		return render(request,'roles.html',{'records':records})
+	if request.user.is_authenticated and request.user.is_staff == 0:
+		with connection.cursor() as cursor:
+			cursor.execute("SELECT * FROM roles")
+			r = cursor.fetchall()
+			records = []
+			for record in r:
+				data= {}
+				data["role_id"] = record[0]
+				data["role_name"] = record[1]
+				records.append(data)
+			return render(request,'roles.html',{'records':records})
+	else:
+		messages.success(request, "Warning! Unauthorized Access")
+		return render(request,'error_404.html', {})
 	
 
 def add_contacts(request):
-	return render(request,'add_contacts.html',{'form':AddRecordForm})
+    if request.user.is_authenticated and request.user.is_staff == 0:
+        return render(request,'add_contacts.html',{'form':AddRecordForm})
+    else:
+        messages.success(request, "Warning! Unauthorized Access")
+        return render(request,'error_404.html', {})
 
 def update_contacts(request,pk):
-	if request.method=='GET':
-		record = EMERGENCY_CONTACTS.objects.get(e_id=pk)
-		form = AddRecordForm(request.POST or None,instance=record)
-		return render(request,'update_contacts.html',{'form':form,'pk':pk})
+	if request.user.is_authenticated and request.user.is_staff == 0:
+		if request.method=='GET':
+			record = EMERGENCY_CONTACTS.objects.get(e_id=pk)
+			form = AddRecordForm(request.POST or None,instance=record)
+			return render(request,'update_contacts.html',{'form':form,'pk':pk})
+		else:
+			record = EMERGENCY_CONTACTS.objects.get(e_id=pk)
+			form = AddRecordForm(request.POST,instance=record)
+			if form.is_valid():
+				form.save()
+				return redirect('e_contact')
 	else:
-		record = EMERGENCY_CONTACTS.objects.get(e_id=pk)
-		form = AddRecordForm(request.POST,instance=record)
-		if form.is_valid():
-			form.save()
-			return redirect('e_contact')
+		messages.success(request, "Warning! Unauthorized Access")
+		return render(request,'error_404.html', {})
 
 def staff(request):
-	records = staff_master_view.objects.all()
-	print(records)
-	return render(request,'staff.html',{'records':records})
+	if request.user.is_authenticated and request.user.is_staff == 1:
+		records = staff_master_view.objects.all()
+		print(records)
+		return render(request,'staff.html',{'records':records})
+	else:
+		messages.success(request, "Warning! Unauthorized Access")
+		return render(request,'error_404.html', {})
 	
 def update_staff(request, pk):
 	if request.method=='GET':
