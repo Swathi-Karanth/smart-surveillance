@@ -9,7 +9,7 @@
     <ul class="navbar-nav justify-content-right">
       {% if user.is_authenticated%}
 
-      <div class="dropdown nav-item">
+      <li class="dropdown nav-item">
         <a class="btn btn-secondary dropdown-toggle nav-item" 
         href="{% url 'home' %}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
           Links</a>
@@ -21,7 +21,7 @@
         </a></li>
       {% endfor %}
         </ul>
-      </div>
+      </li>
 
 
       
