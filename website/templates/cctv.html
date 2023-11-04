@@ -43,22 +43,26 @@
 <table class="table table-striped table-hover table-bordered">
   <thead class="table-dark">
     <tr>
-      <th scope="col">CCTV ID</th>
-      <th scope="col">CCTV Location</th>
-      <th scope="col">CCTV Model</th>
-      <th scope="col">DIRECTORY</th>
+      <th scope="col">FOOTAGE_ID</th>
+      <th scope="col"> START_TIMESTAMP</th>
+      <th scope="col">END_TIMESTAMP</th>
+      <th scope="col">FOLDER</th>
+      <th scope="col">CCTV_ID</th>
+      
     </tr>
   </thead>
   <tbody>
     {% if records %}
       {% for record in records %}
         <tr>
-          <td>{{ record.CCTV_ID }}</td>
-          <td>{{ record.CCTV_LOCATION }}</td>
-          <td>{{ record.MODEL }}</td>
+          <td>{{ record.FOOTAGE_ID }}</td>
+          <td>{{ record.START_TIMESTAMP }}</td>
+          <td>{{ record.END_TIMESTAMP }}</td>
           <td class="clickable-cell">
             <a href="{% url 'play_video' %}">{{ record.FOLDER }}</a>
         </td>
+          <td>{{ record.CCTV_ID }}</td>
+          
           
         </tr>
       {% endfor %}

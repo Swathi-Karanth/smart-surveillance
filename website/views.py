@@ -292,16 +292,17 @@ def delete_visitor(request, pk):
 
 def cctv_page(request):
 	with connection.cursor() as cursor:
-		cursor.execute("SELECT * FROM CCTV")
+		cursor.execute("SELECT * FROM footage_view")
 		r = cursor.fetchall()
 		records = []
 		for record in r:
 			data= {}
-			data["CCTV_ID"] = record[0]
-			data["CCTV_LOCATION"] = record[1]
-			data["MODEL"] = record[2]
+			data["FOOTAGE_ID"] = record[0]
+			data["START_TIMESTAMP"] = record[1]
+			data["END_TIMESTAMP"] = record[2]
 			data["FOLDER"] = record[3]
-			
+			data["CCTV_ID"] = record[4]
+			data["FOLDER"] = record[5]
 			records.append(data)
 			# print(records)
 		return render(request,'cctv.html',{'records':records})

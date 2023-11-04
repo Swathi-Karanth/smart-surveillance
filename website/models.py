@@ -110,3 +110,22 @@ class cctv(models.Model):
 	CCTV_LOCATION = models.CharField(max_length=50)
 	MODEL = models.CharField(max_length=50)
 	FOLDER = models.CharField(max_length=50)
+	class Meta:
+		db_table = 'cctv'
+
+class footage(models.Model):
+	FOOTAGE_ID = models.AutoField(primary_key=True)
+	START_TIMESTAMP = models.TimeField()
+	END_TIMESTAMP = models.TimeField()
+	video_folder = models.CharField(max_length=50)
+	CCTV_ID =models.ForeignKey('CCTV',on_delete=models.CASCADE)
+	class Meta:
+		db_table = 'footage'
+
+class footage_view(models.Model):
+	FOOTAGE_ID = models.AutoField(primary_key=True)
+	START_TIMESTAMP = models.TimeField()
+	END_TIMESTAMP = models.TimeField()
+	video_folder = models.CharField(max_length=50)
+	CCTV_ID =models.ForeignKey('CCTV',on_delete=models.CASCADE)
+	FOLDER = models.CharField(max_length=50)
