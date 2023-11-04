@@ -10,12 +10,15 @@ from .forms import AddRecordForm,LoginForm,addincidents_form
 from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
 
+
 links = [
     {'ec': 'e_contact', 'url': '/e_contact/'},
     {'r': 'roles_list', 'url': '/roles_list/'},
 	{'s': 'staff', 'url': '/staff/'},
 	{'v': 'visitor', 'url': '/visitor_ledger/'},
 	{'i': 'incident', 'url': '/incidents/'},
+	{'i': 'Cctv', 'url': '/cctv_page/'},
+	
     # Add more links as needed
 ]
 
@@ -287,3 +290,21 @@ def delete_visitor(request, pk):
 		messages.success(request, "You Must Be Logged In To Do That...")
 		return redirect('home')
 
+def cctv_page(request):
+	with connection.cursor() as cursor:
+		cursor.execute("SELECT * FROM CCTV")
+		r = cursor.fetchall()
+		records = []
+		for record in r:
+			data= {}
+			data["CCTV_ID"] = record[0]
+			data["CCTV_LOCATION"] = record[1]
+			data["MODEL"] = record[2]
+			data["FOLDER"] = record[3]
+			
+			records.append(data)
+			# print(records)
+		return render(request,'cctv.html',{'records':records})
+
+def play_video(request):
+    return render(request, 'play_video.html', {})

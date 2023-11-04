@@ -19,11 +19,13 @@ class RoleMiddleware:
                         {'s': 'staff','title': 'Staff', 'url': '/staff/'},
                         {'v': 'visitor','title': 'Visitor Log', 'url': '/visitor_ledger/'},
                         {'i': 'incident','title': 'Incident History', 'url': '/incidents/'},
+                        {'c': 'cctv','title': 'CCTV', 'url': '/cctv_page/'},
                     ]
             else:
                 request.role_links = [
                     {'v': 'visitor', 'title': 'Visitor Log', 'url': '/visitor_ledger/'},
                     {'i': 'incident','title': 'Incident History', 'url': '/incidents/'},
+                    {'c': 'cctv','title': 'CCTV', 'url': '/cctv_page/'},
                 ]
         else:
             request.role_links = []  # No links for unauthenticated users

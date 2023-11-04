@@ -104,3 +104,9 @@ class staff_master_view(models.Model):
 	class Meta:
 		managed = False 
 		db_table = "staff_master_view"
+
+class cctv(models.Model):
+	CCTV_ID =models.AutoField(primary_key=True)
+	CCTV_LOCATION = models.CharField(max_length=50)
+	MODEL = models.CharField(max_length=50)
+	FOLDER = models.CharField(max_length=50)
