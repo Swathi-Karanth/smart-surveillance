@@ -1,16 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-
-
+{% load static %}
+<style>
+  body {
+    background-image: url('{% static "home/boolean.jpg" %}');
+    background-repeat: repeat;
+    background-attachment: auto;
+    background-size: 100%;
+  }
+  h3 
+    {
+      text-shadow: 2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,
+                   1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+    
+  }
+</style>
+<body>
 {% if user.is_authenticated %}
 {% if user.is_staff %}
-<p>Logged in as admin.</p>
+<h3>Logged in as admin.</h3>
 {% else %}
-<p>Logged in as staff member.</p>
+<h3>Logged in as staff member.</h3>
 {% endif %}
- <p>Welcome {{user.username}}</p>
+ <h3>Welcome <strong>{{user.username}}</strong>!!!</h3>
 
 <button type="button" class="btn btn-lg btn-info" 
 data-bs-trigger="hover focus"
@@ -65,7 +78,7 @@ title="Dashboard" data-bs-content="Summary of latest updates">Dashboard</button>
 
 </div>
 
-
+</body>
 
 {% endif %}
 

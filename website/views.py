@@ -153,7 +153,7 @@ def add_record(request):
                 add_record = form.save()
                 messages.success(request, "Record Added...")
                 return redirect('home')
-        return render(request, 'add_record.html', {'form':form})
+        return render(request, 'add_record.html', {'form':form,'links': request.role_links})
     else:
         messages.success(request, "You Must Be Logged In as Admin...")
         return redirect('home')
@@ -167,7 +167,7 @@ def update_record(request, pk):
             form.save()
             messages.success(request, "Record Has Been Updated!")
             return redirect('home')
-        return render(request, 'update_record.html', {'form':form})
+        return render(request, 'update_record.html', {'form':form, 'links': request.role_links})
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')
@@ -192,7 +192,7 @@ def roles_list(request):
 
 def add_contacts(request):
     if request.user.is_authenticated and request.user.is_staff == 1:
-        return render(request,'add_contacts.html',{'form':AddRecordForm})
+        return render(request,'add_contacts.html',{'form':AddRecordForm, 'links': request.role_links})
     else:
         messages.success(request, "Warning! Unauthorized Access")
         return render(request,'error_404.html', {})
@@ -202,7 +202,7 @@ def update_contacts(request,pk):
         if request.method=='GET':
             record = EMERGENCY_CONTACTS.objects.get(e_id=pk)
             form = AddRecordForm(request.POST or None,instance=record)
-            return render(request,'update_contacts.html',{'form':form,'pk':pk})
+            return render(request,'update_contacts.html',{'form':form,'pk':pk, 'links': request.role_links})
         else:
             record = EMERGENCY_CONTACTS.objects.get(e_id=pk)
             form = AddRecordForm(request.POST,instance=record)
@@ -247,7 +247,7 @@ def update_staff(request, pk):
         if request.method == 'GET':
             record = staff_master.objects.get(STAFF_ID=pk)
             form = AddRecordForm_staff(request.POST or None, instance=record)
-            return render(request, 'update_staff.html', {'form': form, 'pk': pk})
+            return render(request, 'update_staff.html', {'form': form, 'pk': pk, 'links': request.role_links})
         else:
             record = staff_master.objects.get(STAFF_ID=pk)
             form = AddRecordForm_staff(request.POST, instance=record)
@@ -272,7 +272,7 @@ def add_staff(request):
                 user = User.objects.create_user(username=column1_value, password=column2_value)
                 user.save()
                 return redirect('home')
-        return render(request, 'add_record.html', {'form':form})
+        return render(request, 'add_record.html', {'form':form, 'links': request.role_links})
     else:
         messages.success(request, "You Must Be Logged In as admin...")
         return redirect('home')
@@ -286,7 +286,7 @@ def add_role(request):
                 add_record = form.save()
                 messages.success(request, "Record Added...")
                 return redirect('home')
-        return render(request, 'add_role.html', {'form':form})
+        return render(request, 'add_role.html', {'form':form, 'links': request.role_links})
     else:
         messages.success(request, "You Must Be Logged In as admin...")
         return redirect('home')
@@ -324,7 +324,7 @@ def add_visitor(request):
                 add_record = form.save()
                 messages.success(request, "Record Added...")
                 return redirect('home')
-        return render(request, 'add_visitor.html', {'form':form})
+        return render(request, 'add_visitor.html', {'form':form, 'links': request.role_links})
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')
@@ -346,7 +346,7 @@ def add_incidents(request):
                 add_record = form.save()
                 messages.success(request, "Record Added...")
                 return redirect('home')
-        return render(request, 'add_incidents.html', {'form':form})
+        return render(request, 'add_incidents.html', {'form':form, 'links': request.role_links})
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')
@@ -354,7 +354,7 @@ def update_incidents(request, pk):
     if request.method=='GET':
         record = staff_master.objects.get(INCIDENT=pk)
         form = AddRecordForm_staff(request.POST or None,instance=record)
-        return render(request,'update_incidents.html',{'form':form,'pk':pk})
+        return render(request,'update_incidents.html',{'form':form,'pk':pk, 'links': request.role_links})
     else:
         record = staff_master.objects.get(INCIDENT=pk)
         form = AddRecordForm_staff(request.POST,instance=record)
@@ -405,7 +405,7 @@ def cctv_page(request):
 
 def play_video(request):
     if request.user.is_authenticated and request.user.is_staff == 1:
-        return render(request, 'play_video.html', {})
+        return render(request, 'play_video.html', {'links': request.role_links})
     else:
         messages.success(request, "Warning! Unauthorized Access")
         return redirect('error_404')
