@@ -31,5 +31,6 @@ urlpatterns = [
     path('delete_visitor/<int:pk>', views.delete_visitor, name='delete_visitor'),
     path('cctv_page/', views.cctv_page, name='Cctv'),
     path('play_video/', views.play_video, name='play_video'),
+    path('error_404/', views.error_404, name='error_404'),
 ]
 

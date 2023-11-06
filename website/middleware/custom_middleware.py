@@ -23,6 +23,7 @@ class RoleMiddleware:
                     ]
             else:
                 request.role_links = [
+                    {'ec': 'e_contact', 'title': 'Emergency Contacts','url': '/e_contact/'},
                     {'v': 'visitor', 'title': 'Visitor Log', 'url': '/visitor_ledger/'},
                     {'i': 'incident','title': 'Incident History', 'url': '/incidents/'},
                 ]

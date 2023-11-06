@@ -24,7 +24,7 @@ links = [
 ]
 
 def error_404(request):
-	return render(request, 'error_404.html', {})
+	return render(request,'error_404.html',{})
 
 def login_user(request):
 	if request.user.is_authenticated == False:
@@ -85,7 +85,7 @@ def e_contact(request):
 	# records = EMERGENCY_CONTACTS.objects.all()
 	# print(records)
 	# return render(request,'e_contact.html',{'records':records})
-	if request.user.is_authenticated and request.user.is_staff == 1:
+	if request.user.is_authenticated:
 		with connection.cursor() as cursor:
 			cursor.execute("SELECT * FROM EMERGENCY_CONTACTS")
 			r = cursor.fetchall()
@@ -99,11 +99,11 @@ def e_contact(request):
 				data["google_map_link"] = record[4]
 				records.append(data)
 				# print(records)
-			return render(request,'e_contact.html',{'records':records})
+			return render(request,'e_contact.html',{'records':records, 'links': request.role_links})
 
 	else:
 		messages.success(request, "Warning! Unauthorized Access")
-		return render(request,'error_404.html', {})
+		return redirect('error_404')
 	
 
 def customer_record(request, pk):
@@ -115,22 +115,20 @@ def customer_record(request, pk):
 		messages.success(request, "You Must Be Logged In To View That Page...")
 		return redirect('home')
 
-
-
 def delete_record(request, pk):
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and request.user.is_staff == 1:
 		delete_it = EMERGENCY_CONTACTS.objects.get(id=pk)
 		delete_it.delete()
 		messages.success(request, "Record Deleted Successfully...")
 		return redirect('home')
 	else:
-		messages.success(request, "You Must Be Logged In To Do That...")
+		messages.success(request, "You Must Be Logged In as admin To Do That...")
 		return redirect('home')
 
 
 def add_record(request):
 	form = AddRecordForm(request.POST or None)
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and request.user.is_staff == 1:
 		if request.method == "POST":
 			if form.is_valid():
 				add_record = form.save()
@@ -138,7 +136,7 @@ def add_record(request):
 				return redirect('home')
 		return render(request, 'add_record.html', {'form':form})
 	else:
-		messages.success(request, "You Must Be Logged In...")
+		messages.success(request, "You Must Be Logged In as Admin...")
 		return redirect('home')
 
 
@@ -158,7 +156,7 @@ def update_record(request, pk):
 def roles_list(request):
 	# records = Roles.objects.all()
 	# return render(request,'roles.html',{'records':records})
-	if request.user.is_authenticated and request.user.is_staff == 0:
+	if request.user.is_authenticated and request.user.is_staff == 1:
 		with connection.cursor() as cursor:
 			cursor.execute("SELECT * FROM roles")
 			r = cursor.fetchall()
@@ -168,21 +166,21 @@ def roles_list(request):
 				data["role_id"] = record[0]
 				data["role_name"] = record[1]
 				records.append(data)
-			return render(request,'roles.html',{'records':records})
+			return render(request,'roles.html',{'records':records , 'links': request.role_links})
 	else:
 		messages.success(request, "Warning! Unauthorized Access")
 		return render(request,'error_404.html', {})
 	
 
 def add_contacts(request):
-    if request.user.is_authenticated and request.user.is_staff == 0:
+    if request.user.is_authenticated and request.user.is_staff == 1:
         return render(request,'add_contacts.html',{'form':AddRecordForm})
     else:
         messages.success(request, "Warning! Unauthorized Access")
         return render(request,'error_404.html', {})
 
 def update_contacts(request,pk):
-	if request.user.is_authenticated and request.user.is_staff == 0:
+	if request.user.is_authenticated and request.user.is_staff == 1:
 		if request.method=='GET':
 			record = EMERGENCY_CONTACTS.objects.get(e_id=pk)
 			form = AddRecordForm(request.POST or None,instance=record)
@@ -201,26 +199,30 @@ def staff(request):
 	if request.user.is_authenticated and request.user.is_staff == 1:
 		records = staff_master_view.objects.all()
 		print(records)
-		return render(request,'staff.html',{'records':records})
+		return render(request,'staff.html',{'records':records , 'links': request.role_links})
 	else:
 		messages.success(request, "Warning! Unauthorized Access")
-		return render(request,'error_404.html', {})
+		return redirect('error_404')
 	
 def update_staff(request, pk):
-	if request.method=='GET':
-		record = staff_master.objects.get(STAFF_ID=pk)
-		form = AddRecordForm_staff(request.POST or None,instance=record)
-		return render(request,'update_staff.html',{'form':form,'pk':pk})
+	if request.user.is_authenticated and request.user.is_staff == 1:
+		if request.method == 'GET':
+			record = staff_master.objects.get(STAFF_ID=pk)
+			form = AddRecordForm_staff(request.POST or None, instance=record)
+			return render(request, 'update_staff.html', {'form': form, 'pk': pk})
+		else:
+			record = staff_master.objects.get(STAFF_ID=pk)
+			form = AddRecordForm_staff(request.POST, instance=record)
+			if form.is_valid():
+				form.save()
+				return redirect('staff')
 	else:
-		record = staff_master.objects.get(STAFF_ID=pk)
-		form = AddRecordForm_staff(request.POST,instance=record)
-		if form.is_valid():
-			form.save()
-			return redirect('staff')
+		messages.success(request, "Warning! Unauthorized Access")
+		return redirect('error_404')
 
 def add_staff(request):
 	form = AddRecordForm_staff(request.POST or None)
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and request.user.is_staff == 1:
 		if request.method == "POST":
 			if form.is_valid():
 				add_record = form.save()
@@ -234,13 +236,13 @@ def add_staff(request):
 				return redirect('home')
 		return render(request, 'add_record.html', {'form':form})
 	else:
-		messages.success(request, "You Must Be Logged In...")
+		messages.success(request, "You Must Be Logged In as admin...")
 		return redirect('home')
 
 
 def add_role(request):
 	form = AddRecordForm_role(request.POST or None)
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and request.user.is_staff == 1:
 		if request.method == "POST":
 			if form.is_valid():
 				add_record = form.save()
@@ -248,13 +250,17 @@ def add_role(request):
 				return redirect('home')
 		return render(request, 'add_role.html', {'form':form})
 	else:
-		messages.success(request, "You Must Be Logged In...")
+		messages.success(request, "You Must Be Logged In as admin...")
 		return redirect('home')
 
 def visitor(request):
-	records = visitor_ledger.objects.all()
-	print(records)
-	return render(request,'visitor_ledger.html',{'records':records})
+    if request.user.is_authenticated:
+        records = visitor_ledger.objects.all()
+        print(records)
+        return render(request,'visitor_ledger.html',{'records':records, 'links': request.role_links})
+    else: 
+        messages.success(request, "You Must Be Logged In...")
+        return redirect('login')
 
 def add_visitor(request):
 	form = addrecord_visitor(request.POST or None)
@@ -270,9 +276,13 @@ def add_visitor(request):
 		return redirect('home')
 
 def incident(request):
-	records = incidents.objects.all()
-	print(records)
-	return render(request,'incidents.html',{'records':records})
+    if request.user.is_authenticated:
+        records = incidents.objects.all()
+        print(records)
+        return render(request,'incidents.html',{'records':records,'links': request.role_links})
+    else:
+        messages.success(request, "You Must Be Logged In...")
+        return redirect('login')
 
 def add_incidents(request):
 	form = addincidents_form(request.POST or None)
@@ -299,41 +309,50 @@ def update_incidents(request, pk):
 			return redirect('staff')
 	
 def delete_staff(request, pk):
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and request.user.is_staff == 1:
 		delete_it = staff_master.objects.get(STAFF_ID=pk)
 		delete_it.delete()
 		messages.success(request, "Record Deleted Successfully...")
 		return redirect('home')
 	else:
-		messages.success(request, "You Must Be Logged In To Do That...")
+		messages.success(request, "You Must Be Logged In as admin To Do That...")
 		return redirect('home')
 
 def delete_visitor(request, pk):
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and request.user.is_staff == 1:
 		delete_it = visitor_ledger.objects.get(VISITOR_ID=pk)
 		delete_it.delete()
 		messages.success(request, "Record Deleted Successfully...")
 		return redirect('home')
 	else:
-		messages.success(request, "You Must Be Logged In To Do That...")
+		messages.success(request, "You Must Be Logged In as admin To Do That...")
 		return redirect('home')
 
 def cctv_page(request):
-	with connection.cursor() as cursor:
-		cursor.execute("SELECT * FROM footage_view")
-		r = cursor.fetchall()
-		records = []
-		for record in r:
-			data= {}
-			data["FOOTAGE_ID"] = record[0]
-			data["START_TIMESTAMP"] = record[1]
-			data["END_TIMESTAMP"] = record[2]
-			data["FOLDER"] = record[3]
-			data["CCTV_ID"] = record[4]
-			data["FOLDER"] = record[5]
-			records.append(data)
-			# print(records)
-		return render(request,'cctv.html',{'records':records})
+    if request.user.is_authenticated and request.user.is_staff == 1:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM footage_view")
+            r = cursor.fetchall()
+            records = []
+            for record in r:
+                data= {}
+                data["FOOTAGE_ID"] = record[0]
+                data["START_TIMESTAMP"] = record[1]
+                data["END_TIMESTAMP"] = record[2]
+                data["FOLDER"] = record[3]
+                data["CCTV_ID"] = record[4]
+                data["FOLDER"] = record[5]
+                records.append(data)
+				# print(records)
+        return render(request,'cctv.html',{'records':records,'links': request.role_links})
+    else:
+        messages.success(request, "Warning! Unauthorized Access")
+        return redirect('error_404')
 
 def play_video(request):
-    return render(request, 'play_video.html', {})
+    if request.user.is_authenticated and request.user.is_staff == 1:
+        return render(request, 'play_video.html', {})
+    else:
+        messages.success(request, "Warning! Unauthorized Access")
+        return redirect('error_404')
+

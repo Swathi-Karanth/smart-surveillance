@@ -17,13 +17,6 @@
           {% endfor %}
         </ul>
       </div> 
-      <li class="nav-item">
-      {% for link in links %}
-      <li class="nav-item">
-        <a class="nav-link" href="{{ link.url }}" style="color: rgb(204, 127, 225);">&nbsp;&nbsp;&nbsp;&nbsp;{{link.title}}</a>
-      </li>
-      {% endfor %}
-      </li>
 
       <li class="nav-item">
         <a class="nav-link" href="{% url 'logout' %}" style="color: rgb(204, 127, 225);">&nbsp;&nbsp;&nbsp;&nbsp;Logout</a>
