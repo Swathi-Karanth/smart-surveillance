@@ -6,7 +6,7 @@
 <style>
   body {
     background-image: url('{% static "visitor/woodhouse.jpg"%}');
-    background-repeat: no-repeat;
+    background-repeat: repeat;
     background-attachment: auto;
     background-size: 100%;
   }
@@ -17,7 +17,9 @@
       font-size: 20px; 
       height: 100%; 
       table-layout: auto; 
-      : center;
+      border: 1px solid black;
+      border-collapse: collapse;
+      text-align: center;
       
   } 
 
@@ -29,10 +31,24 @@
   }  
 
   th { 
-      color: black;
-
+      /* color: black; */
+      /* color: #cc99ff;  */
+      color: #7d74a8
   } 
 </style> 
+
+<div>
+  
+  <form method="get" class="navbar-form" action="">
+    <input type = "text" name = "VISITOR_NAME" value=""/>
+    <input type = "submit" value="Search"/>
+    <button type = "submit" name = "Clear" value="Clear"> Clear</button>
+    <div align = 'right'><a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+  
+      <a href="{% url 'add_visitor' %}" class="btn btn-danger">Add</a> </div>
+    
+  </form>
+  </div>
 
 <body>
 
@@ -47,7 +63,7 @@
       <th scope="col">Exit Date Time</th>
       <th scope="col">Visitor Contact</th>
       <th scope="col">Recorded By</th>  
-      
+      <th scope="col"></th>  
     </tr>
   </thead>
   <tbody>
@@ -72,9 +88,9 @@
 
 <br/><br/>
 
-<div><a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+<!-- <div><a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
 
-<a href="{% url 'add_visitor' %}" class="btn btn-secondary">Add</a></div>
+<a href="{% url 'add_visitor' %}" class="btn btn-secondary">Add</a></div> -->
 
 {% endblock %}
 </body>
