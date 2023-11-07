@@ -78,6 +78,7 @@
           <td>{{ record.EXIT_DATE_TIME }}</td>
           <td>{{ record.VISITOR_CONTACT }}</td>
           <td>{{ record.RECORDED_BY.STAFF_NAME }}</td>
+          <td><a href="{% url 'update_visitor' pk=record.VISITOR_ID %}" class="btn btn-danger">Edit</a></td>
           <td><a href="{% url 'delete_visitor' record.VISITOR_ID %}" class="btn btn-danger">Delete</a></td>
 
         </tr>

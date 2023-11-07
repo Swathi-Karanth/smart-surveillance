@@ -93,7 +93,7 @@ class addrecord_visitor(forms.ModelForm):
 	VISITOR_NAME = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"class":"form-control"}), label="Visitor Name")
 	PURPOSE_OF_VISIT = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"class":"form-control"}), label="Purpose of Visit")
 	ENTRY_DATE_TIME = forms.DateTimeField(required=True, widget=forms.widgets.TextInput(attrs={"class":"form-control"}),label="Entry Date-Time")
-	EXIT_DATE_TIME =forms.DateTimeField(required=True, widget=forms.widgets.TextInput(attrs={"class":"form-control"}),label="Exit Date-Time")
+	EXIT_DATE_TIME =forms.DateTimeField(required=False, widget=forms.widgets.TextInput(attrs={"class":"form-control"}),label="Exit Date-Time")
 
 	VISITOR_CONTACT = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"class":"form-control"}), label="Visitor Contact")
 

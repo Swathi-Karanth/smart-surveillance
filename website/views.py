@@ -410,3 +410,27 @@ def play_video(request):
         messages.success(request, "Warning! Unauthorized Access")
         return redirect('error_404')
 
+def update_visitor(request, pk):
+    if request.method=='GET':
+        record = visitor_ledger.objects.get(VISITOR_ID=pk)
+        form = addrecord_visitor(request.POST or None,instance=record)
+        return render(request,'update_visitor.html',{'form':form,'pk':pk, 'links': request.role_links})
+    else:
+        record = visitor_ledger.objects.get(VISITOR_ID=pk)
+        form = addrecord_visitor(request.POST,instance=record)
+        if form.is_valid():
+            form.save()
+            return redirect('visitor_ledger')
+
+
+def profile(request,pk):
+    if request.user.is_authenticated:
+        records = staff_master.objects.get(STAFF_ID = pk)
+
+        return render(request,'profile.html',{'records':records,'links': request.role_links})
+    else:
+        messages.success(request, "You Must Be Logged In...")
+        return redirect('login')
+
+
+
