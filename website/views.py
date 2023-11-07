@@ -426,7 +426,7 @@ def update_visitor(request, pk):
 def profile(request,pk):
     if request.user.is_authenticated:
         records = staff_master.objects.get(STAFF_ID = pk)
-
+        print(records.STAFF_ID)  
         return render(request,'profile.html',{'records':records,'links': request.role_links})
     else:
         messages.success(request, "You Must Be Logged In...")

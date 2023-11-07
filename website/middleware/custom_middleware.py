@@ -11,7 +11,7 @@ class RoleMiddleware:
         # print(user.staff_master.STAFF_ROLE.role_id)
         if request.user.is_authenticated:
             # .staff_master.STAFF_ROLE.role_id
-            if request.user.username == "admin":
+            if request.user.is_staff == 1:
                 
                 request.role_links = [
                         {'ec': 'e_contact', 'title': 'Emergency Contacts','url': '/e_contact/'},
