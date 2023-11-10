@@ -4,7 +4,7 @@ from django.db import connection
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import AddRecordForm_staff, LoginForm, SignUpForm, AddRecordForm,AddRecordForm_role,addrecord_visitor
-from .models import EMERGENCY_CONTACTS, Record, staff_master,visitor_ledger,incidents,staff_master_view
+from .models import EMERGENCY_CONTACTS, Record, staff_master,visitor_ledger,incidents,staff_master_view,duty_roster,shift_master
 from .models import Roles
 from .forms import AddRecordForm,LoginForm,addincidents_form
 from django.contrib.auth.models import User
@@ -360,11 +360,11 @@ def add_incidents(request):
 
 def update_incidents(request, pk):
     if request.method=='GET':
-        record = staff_master.objects.get(INCIDENT=pk)
+        record = staff_master.objects.get(INCIDENT_ID=pk)
         form = AddRecordForm_staff(request.POST or None,instance=record)
         return render(request,'update_incidents.html',{'form':form,'pk':pk, 'links': request.role_links})
     else:
-        record = staff_master.objects.get(INCIDENT=pk)
+        record = staff_master.objects.get(INCIDENT_ID=pk)
         form = AddRecordForm_staff(request.POST,instance=record)
         if form.is_valid():
             form.save()
@@ -461,7 +461,16 @@ def call_mysql_procedure(request):
             print(result_set)
         # Process the result_set if needed
 
-    return render(request, 'procedure.html')
+    return render(request, 'procedure.html',{'links': request.role_links})
+
+def duty(request):
+    records = duty_roster.objects.all()
+    return render(request,'duty.html',{'records':records,'links': request.role_links})
+
+def shift(request):
+    records = shift_master.objects.all()
+    return render(request,'shift.html',{'records':records,'links': request.role_links})
+    
 
 
 

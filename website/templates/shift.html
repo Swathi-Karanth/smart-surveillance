@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% load static %}
+
+<style>
+  body {
+    background-image: url('{% static "staff/servers.jpg"%}');
+    background-repeat: repeat;
+    background-attachment: auto;
+    background-size: 100%;
+  }
+ 
+  table { 
+      width: 10%;
+      margin-left: auto; 
+      margin-right: auto; 
+      font-size: 20px; 
+      height: 100%; 
+      table-layout: auto; 
+      border: 1px solid black;
+      border-collapse: collapse;
+      text-align: center;
+      
+  } 
+
+  tr:nth-child(even) { 
+      background-color: #7d74a8; 
+  }
+  tr:nth-child(odd) { 
+    background-color: #cc99ff; 
+  }  
+
+  th { 
+      color: black;
+
+  } 
+</style> 
+
+
+<body>
+
+<table class="table table-striped table-hover center table-bordered">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">SHIFT_ID</th>
+      <th scope="col">SHIFT_NAME</th>
+      <th scope="col">START_TIME</th>
+      <th scope="col">END_TIME</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+    {% if records %}
+      {% for record in records %}
+        <tr>
+          <td>{{ record.SHIFT_ID }}</td>
+          <td>{{ record.SHIFT_NAME }}</td>
+          <td>{{ record.START_TIME }}</td>
+          <td>{{ record.END_TIME }}</td>
+                   
+        </tr>
+      {% endfor %}
+    {% endif %}
+  </tbody>
+</table>
+
+
+    <div><a href="{% url 'home' %}" class="btn btn-secondary">Back</a></div>
+
+{% endblock %}
+
+</body>

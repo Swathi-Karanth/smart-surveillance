@@ -76,7 +76,7 @@ class incident_types(models.Model):
 	
 
 class incidents(models.Model):
-	INCIDENT  = models.AutoField(primary_key=True,db_column="INCIDENT_ID")  
+	INCIDENT_ID  = models.AutoField(primary_key=True,db_column="INCIDENT_ID")  
 	INCIDENT_TYPE = models.ForeignKey('incident_types',on_delete=models.CASCADE)
 	INCIDENT_DESC = models.CharField(max_length = 500) 
 	REPORTED_STAFF =  models.ForeignKey('staff_master',on_delete=models.CASCADE)
@@ -129,3 +129,20 @@ class footage_view(models.Model):
 	video_folder = models.CharField(max_length=50)
 	CCTV_ID =models.ForeignKey('CCTV',on_delete=models.CASCADE)
 	FOLDER = models.CharField(max_length=50)
+
+class shift_master(models.Model):
+	SHIFT_ID = models.AutoField(primary_key=True) 
+	SHIFT_NAME = models.CharField(max_length=255) 
+	START_TIME = models.CharField(max_length=50) 
+	END_TIME = models.CharField(max_length= 50) 
+	class Meta:
+		db_table = 'SHIFT_MASTER'
+
+class duty_roster(models.Model):
+	STAFF_SHIFT_ID = models.AutoField(primary_key=True) 
+	STAFF = models.ForeignKey('staff_master',on_delete=models.CASCADE)
+	SHIFT = models.ForeignKey('shift_master',on_delete=models.CASCADE)
+	START_DATE_TIME = models.DateTimeField()
+	END_DATE_TIME =  models.DateTimeField()
+	class Meta:
+		db_table = 'DUTY_ROSTER'

@@ -55,14 +55,14 @@
     {% if records %}
       {% for record in records %}
         <tr>
-          <td>{{ record.INCIDENT }}</td>
+          <td>{{ record.INCIDENT_ID }}</td>
           <td>{{ record.INCIDENT_TYPE.INC_TYPE_ID }}</td>
           <td>{{ record.INCIDENT_DESC }}</td>
           <td>{{ record.REPORTED_STAFF.STAFF_NAME }}</td>
           <td>{{ record.REPORTED_DATE_TIME }}</td>
           <td>{{ record.ACTION }}</td>
           <td>{{ record.STATUS }}</td>
-          
+      
         </tr>
       {% endfor %}
     {% endif %}

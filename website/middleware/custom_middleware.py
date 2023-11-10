@@ -21,6 +21,8 @@ class RoleMiddleware:
                         {'i': 'incident','title': 'Incident History', 'url': '/incidents/'},
                         {'c': 'cctv','title': 'CCTV Footages', 'url': '/cctv_page/'},
                         {'p': 'call_mysql_procedure','title': 'Procedures', 'url': '/call_mysql_procedure/'},
+                        {'p': 'duty','title': 'Duty Roster', 'url': '/duty/'},
+                        {'sh': 'shift','title': 'Shift Master', 'url': '/shift/'},
                     ]
             else:
                 request.role_links = [
