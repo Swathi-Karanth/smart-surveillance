@@ -22,10 +22,10 @@
       <li class="nav-item">
         <a class="nav-link" href="{% url 'logout' %}" style="color: rgb(204, 127, 225);">&nbsp;&nbsp;&nbsp;&nbsp;Logout</a>
       </li>
-      {% comment %} <li class="nav-item">
+       <li class="nav-item">
         
-        <a href="{% url 'profile' pk=record.STAFF_ID%}" class="btn btn-primary"></a>
-          </li> {% endcomment %}
+        <a href="{% url 'profile' pk=request.user.username%}" class="btn btn-primary">PROFILE</a>
+          </li>
 
       {% else %}
       <li class="nav-item">

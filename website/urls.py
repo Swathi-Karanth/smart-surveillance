@@ -33,6 +33,7 @@ urlpatterns = [
     path('play_video/', views.play_video, name='play_video'),
     path('error_404/', views.error_404, name='error_404'),
     path('update_visitor/<int:pk>', views.update_visitor, name='update_visitor'),
-    path('profile/<int:pk>', views.profile, name='profile'),
+    path('profile/<str:pk>', views.profile, name='profile'),
+    path('call_mysql_procedure/', views.call_mysql_procedure, name='call_mysql_procedure'),
 ]
 

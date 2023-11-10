@@ -9,6 +9,9 @@ from .models import Roles
 from .forms import AddRecordForm,LoginForm,addincidents_form
 from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
+from django.db.models import Subquery
+from django.db.models import Q
+
 
 
 links = [
@@ -226,7 +229,11 @@ def staff(request):
                 return render(request,'staff.html',{'records':records,'links': request.role_links})
                 
             if st is not None:
-                staffdata = staff_master_view.objects.filter(STAFF_NAME__icontains = st)
+                
+                staffdata = staff_master_view.objects.filter(Q(STAFF_NAME__icontains=st) | Q(EMPLOYEE_ID__in=Subquery(staff_master_view.objects.values('EMPLOYEE_ID').filter(STAFF_NAME__icontains=st))))
+                # the subquery is useful because it allows you to filter the staffdata queryset by both the STAFF_NAME 
+                # and EMPLOYEE_ID columns. This is useful because it allows you to find all records
+                #  where the STAFF_NAME column contains the search term, even if the search term is only a partial match.
                 print(staffdata)
                 data = {
                         'stdata' : staffdata
@@ -350,6 +357,7 @@ def add_incidents(request):
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')
+
 def update_incidents(request, pk):
     if request.method=='GET':
         record = staff_master.objects.get(INCIDENT=pk)
@@ -425,12 +433,35 @@ def update_visitor(request, pk):
 
 def profile(request,pk):
     if request.user.is_authenticated:
-        records = staff_master.objects.get(STAFF_ID = pk)
-        print(records.STAFF_ID)  
+        records = staff_master.objects.get(STAFF_NAME = pk)
+        print(records.STAFF_NAME)  
         return render(request,'profile.html',{'records':records,'links': request.role_links})
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('login')
+
+def call_mysql_procedure(request):
+    if request.method == 'POST':
+        param1 = request.POST.get('join_from_date')
+        param2 = request.POST.get('join_to_date')
+        param3 = request.POST.get('age_condition')
+        param4 = request.POST.get('age_range_from')
+        param5 = request.POST.get('age_range_to')
+        
+        param1 = None if param1.lower() == 'null' else param1
+        param2 = None if param2.lower() == 'null' else param2
+        param3 = None if param2.lower() == 'null' else param3
+        param4 = None if param4.lower() == 'null' else param4
+        param5 = None if param5.lower() == 'null' else param5
+
+        with connection.cursor() as cursor:
+            cursor.callproc('staff_data_analysis', [param1, param2,param3,param4,param5,])
+            # If your stored procedure returns results, fetch them
+            result_set = cursor.fetchall()
+            print(result_set)
+        # Process the result_set if needed
+
+    return render(request, 'procedure.html')
 
 
 

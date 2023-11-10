@@ -20,6 +20,7 @@ class RoleMiddleware:
                         {'v': 'visitor','title': 'Visitor Log', 'url': '/visitor_ledger/'},
                         {'i': 'incident','title': 'Incident History', 'url': '/incidents/'},
                         {'c': 'cctv','title': 'CCTV Footages', 'url': '/cctv_page/'},
+                        {'p': 'call_mysql_procedure','title': 'Procedures', 'url': '/call_mysql_procedure/'},
                     ]
             else:
                 request.role_links = [

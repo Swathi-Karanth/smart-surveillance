@@ -70,8 +70,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'campus_surveillance',
         'USER': 'root',
-        # 'PASSWORD': 'Haechan@2023',
-        'PASSWORD': 'mySQL_admin0',
+        'PASSWORD': 'mysql@123',
+        # 'PASSWORD': 'mySQL_admin0',
         'HOST': 'localhost',
         'PORT': '3306',
     }

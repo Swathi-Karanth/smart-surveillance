@@ -1,0 +1,34 @@
+<!-- your_template.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Call MySQL Procedure</title>
+</head>
+<body>
+    <form method="post" action="{% url 'call_mysql_procedure' %}">
+        {% csrf_token %}
+        <!-- Add input fields for parameters -->
+        <label for="param1">Join_from_date:</label>
+        <input type="text" name="join_from_date" >
+        <br>
+        <br>
+        <label for="param2">Join_to_date:</label>
+        <input type="text" name="join_to_date" >
+        <br>
+        <br>
+        <label for="param2">Age_condition:</label>
+        <input type="text" name="age_condition" >
+        <br>
+        <br>
+        <label for="param2">Age_From:</label>
+        <input type="text" name="age_range_from" >
+        <br>
+        <br>
+        <label for="param2">Age_To:</label>
+        <input type="text" name="age_range_to" >
+        <br>
+        <br>
+        <button type="submit">Call MySQL Procedure</button>
+    </form>
+</body>
+</html>
