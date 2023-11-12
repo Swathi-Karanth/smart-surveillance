@@ -37,5 +37,6 @@ urlpatterns = [
     path('call_mysql_procedure/', views.call_mysql_procedure, name='call_mysql_procedure'),
     path('duty/', views.duty, name='duty'),
     path('shift/', views.shift, name='shift'),
+    path('audit/', views.audit, name='audit'),
 ]
 

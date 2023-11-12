@@ -17,15 +17,15 @@
         <input type="text" name="join_to_date" >
         <br>
         <br>
-        <label for="param2">Age_condition:</label>
+        <label for="param3">Age_condition:</label>
         <input type="text" name="age_condition" >
         <br>
         <br>
-        <label for="param2">Age_From:</label>
+        <label for="param4">Age_From:</label>
         <input type="text" name="age_range_from" >
         <br>
         <br>
-        <label for="param2">Age_To:</label>
+        <label for="param5">Age_To:</label>
         <input type="text" name="age_range_to" >
         <br>
         <br>
@@ -33,6 +33,32 @@
         <br>
     </form>
     <br>
+    <br>
+    <table class="table table-striped table-hover center table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Staff ID</th>
+            <th scope="col">Staff Name</th>
+            <th scope="col">Username</th>
+            <th scope="col">Gender</th>
+            <th scope="col">DOB</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          {% if records %}
+            {% for record in records %}
+              <tr>
+                <td>{{ record.STAFF_ID }}</td>
+                <td>{{ record.STAFF_NAME }}</td>
+                <td>{{ record.USERNAME }}</td>
+                <td>{{ record.GENDER }}</td>
+                <td>{{ record.DOB }}</td>
+                
+                </tr>
+            {% endfor %}
+        {% endif %}
+                
     <div><a href="{% url 'home' %}" class="btn btn-secondary">Back</a></div>
 </body>
 </html>

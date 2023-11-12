@@ -4,7 +4,7 @@ from django.db import connection
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import AddRecordForm_staff, LoginForm, SignUpForm, AddRecordForm,AddRecordForm_role,addrecord_visitor
-from .models import EMERGENCY_CONTACTS, Record, staff_master,visitor_ledger,incidents,staff_master_view,duty_roster,shift_master
+from .models import EMERGENCY_CONTACTS, Record, staff_master,visitor_ledger,incidents,staff_master_view,duty_roster,shift_master,audit_change_history
 from .models import Roles
 from .forms import AddRecordForm,LoginForm,addincidents_form
 from django.contrib.auth.models import User
@@ -272,9 +272,8 @@ def add_staff(request):
             if form.is_valid():
                 add_record = form.save()
                 messages.success(request, "Record Added...")
-                record = staff_master.objects.get(pk=add_record.pk)  # You might need to adjust the condition
+                record = staff_master.objects.get(pk=add_record.pk)  
                 column1_value = record.STAFF_NAME.replace(" ","") + str(record.STAFF_ID)
-                # column1_value = column1_value
                 column2_value = record.PASSWORD
                 column3_value = record.STAFF_ROLE
                 
@@ -407,7 +406,7 @@ def cctv_page(request):
                 data["CCTV_ID"] = record[4]
                 data["FOLDER"] = record[5]
                 records.append(data)
-                # print(records)
+
         return render(request,'cctv.html',{'records':records,'links': request.role_links})
     else:
         messages.success(request, "Warning! Unauthorized Access")
@@ -450,20 +449,29 @@ def call_mysql_procedure(request):
         param3 = request.POST.get('age_condition')
         param4 = request.POST.get('age_range_from')
         param5 = request.POST.get('age_range_to')
-        
-        param1 = None if param1.lower() == 'null' else param1
-        param2 = None if param2.lower() == 'null' else param2
-        param3 = None if param2.lower() == 'null' else param3
-        param4 = None if param4.lower() == 'null' else param4
-        param5 = None if param5.lower() == 'null' else param5
+
+        param1 = None if param1.lower() == '' else param1
+        param2 = None if param2.lower() == '' else param2
+        param3 = None if param3.lower() == '' else param3
+        param4 = None if param4.lower() == '' else param4
+        param5 = None if param5.lower() == '' else param5
 
         with connection.cursor() as cursor:
-            cursor.callproc('staff_data_analysis', [param1, param2,param3,param4,param5,])
+            cursor.callproc('staff_data_analysis', [param1, param2,param3,param4,param5])
             # If your stored procedure returns results, fetch them
             result_set = cursor.fetchall()
-            print(result_set)
-        # Process the result_set if needed
+            records = []
+            for record in result_set:
+                data= {}
+                data["STAFF_ID"] = record[0]
+                data["STAFF_NAME"] = record[1]
+                data["USERNAME"] = record[2]
+                data["GENDER"] = record[3]
+                data["DOB"] = record[4]
 
+                records.append(data)
+                
+            return render(request, 'procedure.html',{'records':records,'links': request.role_links})
     return render(request, 'procedure.html',{'links': request.role_links})
 
 def duty(request):
@@ -475,5 +483,11 @@ def shift(request):
     return render(request,'shift.html',{'records':records,'links': request.role_links})
     
 
-
-
+def audit(request):
+    try:
+        records = audit_change_history.objects.all()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    print(records)
+    return render(request,'audit.html',{'records':records,'links': request.role_links})
+    
