@@ -1,4 +1,5 @@
 from pyexpat import model
+from unittest.mock import DEFAULT
 from django.db import models
 
 class Record(models.Model):
@@ -36,6 +37,7 @@ class Roles(models.Model):
 class staff_master(models.Model):
 	STAFF_ID = models.AutoField(primary_key=True)
 	STAFF_NAME = models.CharField(max_length=255)
+	USERNAME = models.CharField(max_length=100,default = str(STAFF_ID))
 	GENDER = models.CharField(max_length=1)
 	DOB = models.DateField()
 	MOBILE_NO = models.CharField(max_length=20)
@@ -139,7 +141,7 @@ class shift_master(models.Model):
 		db_table = 'SHIFT_MASTER'
 
 class duty_roster(models.Model):
-	STAFF_SHIFT_ID = models.AutoField(primary_key=True) 
+	STAFF_SHIFT = models.AutoField(primary_key=True,db_column='STAFF_SHIFT_ID') 
 	STAFF = models.ForeignKey('staff_master',on_delete=models.CASCADE)
 	SHIFT = models.ForeignKey('shift_master',on_delete=models.CASCADE)
 	START_DATE_TIME = models.DateTimeField()

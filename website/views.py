@@ -273,9 +273,11 @@ def add_staff(request):
                 add_record = form.save()
                 messages.success(request, "Record Added...")
                 record = staff_master.objects.get(pk=add_record.pk)  # You might need to adjust the condition
-                column1_value = record.STAFF_NAME
+                column1_value = record.STAFF_NAME.replace(" ","") + str(record.STAFF_ID)
+                # column1_value = column1_value
                 column2_value = record.PASSWORD
                 column3_value = record.STAFF_ROLE
+                
                 user = User.objects.create_user(username=column1_value, password=column2_value)
                 user.save()
                 return redirect('home')
@@ -433,8 +435,9 @@ def update_visitor(request, pk):
 
 def profile(request,pk):
     if request.user.is_authenticated:
-        records = staff_master.objects.get(STAFF_NAME = pk)
-        print(records.STAFF_NAME)  
+        print(pk)
+        records = staff_master.objects.get(USERNAME = pk)
+        print(records)  
         return render(request,'profile.html',{'records':records,'links': request.role_links})
     else:
         messages.success(request, "You Must Be Logged In...")
