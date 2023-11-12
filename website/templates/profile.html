@@ -1,6 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
-
+{% load static %}
+<style>
+    body {
+      background-image: url('{% static "staff/20.jpg"%}');
+      background-repeat: repeat;
+      background-attachment: auto;
+      background-size: 100%;
+    }
+</style>
 
 {{records.STAFF_ID}}
 <br>
