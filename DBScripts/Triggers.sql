@@ -1,0 +1,127 @@
+DELIMITER //
+CREATE TRIGGER STAFF_AUDIT_INS
+AFTER INSERT on STAFF_MASTER
+FOR EACH ROW
+BEGIN
+
+    INSERT INTO audit_change_history (
+        parent_table_pk,
+		old_row_data,
+        new_row_data,
+        dml_type,
+        dml_timestamp,
+		audit_table_name
+    )
+    VALUES(
+        NEW.STAFF_ID,
+        null,
+		JSON_OBJECT(
+			"STAFF_ID",NEW.STAFF_ID,
+			"STAFF_NAME",NEW.STAFF_NAME,
+			"GENDER",NEW.GENDER,
+			"DOB",NEW.DOB,
+			"MOBILE_NO",NEW.MOBILE_NO,
+			"EMAIL_ID",NEW.EMAIL_ID,
+			"JOINING_DATE",NEW.JOINING_DATE,
+			"LEAVING_DATE",NEW.LEAVING_DATE,
+			"ACTIVE_STATUS",NEW.ACTIVE_STATUS,
+			"EMPLOYEE_ID",NEW.EMPLOYEE_ID,
+			"PASSWORD",NEW.PASSWORD,
+			"STAFF_ROLE_ID",NEW.STAFF_ROLE_ID),
+			'INSERT',
+        CURRENT_TIMESTAMP,
+		'STAFF_MASTER'
+    );
+
+END //
+
+
+
+DELIMITER //
+CREATE TRIGGER STAFF_AUDIT_UPD
+BEFORE UPDATE on STAFF_MASTER
+FOR EACH ROW
+BEGIN
+
+   INSERT INTO audit_change_history (
+        parent_table_pk,
+		old_row_data,
+        new_row_data,
+        dml_type,
+        dml_timestamp,
+		audit_table_name
+    )
+    VALUES(
+        old.STAFF_ID,
+		JSON_OBJECT(
+			"STAFF_ID",OLD.STAFF_ID,
+			"STAFF_NAME",OLD.STAFF_NAME,
+			"GENDER",OLD.GENDER,
+			"DOB",OLD.DOB,
+			"MOBILE_NO",OLD.MOBILE_NO,
+			"EMAIL_ID",OLD.EMAIL_ID,
+			"JOINING_DATE",OLD.JOINING_DATE,
+			"LEAVING_DATE",OLD.LEAVING_DATE,
+			"ACTIVE_STATUS",OLD.ACTIVE_STATUS,
+			"EMPLOYEE_ID",OLD.EMPLOYEE_ID,
+			"PASSWORD",OLD.PASSWORD,
+			"STAFF_ROLE_ID",OLD.STAFF_ROLE_ID),
+		JSON_OBJECT(
+			"STAFF_ID",NEW.STAFF_ID,
+			"STAFF_NAME",NEW.STAFF_NAME,
+			"GENDER",NEW.GENDER,
+			"DOB",NEW.DOB,
+			"MOBILE_NO",NEW.MOBILE_NO,
+			"EMAIL_ID",NEW.EMAIL_ID,
+			"JOINING_DATE",NEW.JOINING_DATE,
+			"LEAVING_DATE",NEW.LEAVING_DATE,
+			"ACTIVE_STATUS",NEW.ACTIVE_STATUS,
+			"EMPLOYEE_ID",NEW.EMPLOYEE_ID,
+			"PASSWORD",NEW.PASSWORD,
+			"STAFF_ROLE_ID",NEW.STAFF_ROLE_ID),
+        'UPDATE',
+        CURRENT_TIMESTAMP,
+		'STAFF_MASTER'
+    );
+
+END //
+
+
+DELIMITER //
+CREATE TRIGGER STAFF_AUDIT_DEL
+BEFORE DELETE on ROLES
+FOR EACH ROW
+BEGIN
+
+
+   INSERT INTO audit_change_history (
+        parent_table_pk,
+		old_row_data,
+        new_row_data,
+        dml_type,
+        dml_timestamp,
+        dml_created_by,
+		audit_table_name
+    )
+    VALUES(
+        old.STAFF_ID,
+		JSON_OBJECT(
+		"STAFF_ID",OLD.STAFF_ID,
+			"STAFF_NAME",OLD.STAFF_NAME,
+			"GENDER",OLD.GENDER,
+			"DOB",OLD.DOB,
+			"MOBILE_NO",OLD.MOBILE_NO,
+			"EMAIL_ID",OLD.EMAIL_ID,
+			"JOINING_DATE",OLD.JOINING_DATE,
+			"LEAVING_DATE",OLD.LEAVING_DATE,
+			"ACTIVE_STATUS",OLD.ACTIVE_STATUS,
+			"EMPLOYEE_ID",OLD.EMPLOYEE_ID,
+			"PASSWORD",OLD.PASSWORD,
+			"STAFF_ROLE_ID",OLD.STAFF_ROLE_ID),
+		null,
+        'DELETE',
+        CURRENT_TIMESTAMP,
+        @logged_user,
+		'STAFF_MASTER'
+    );
+END //
