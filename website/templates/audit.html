@@ -38,9 +38,16 @@
 </style> 
 
 <div>
-  
 
-  <div align = 'right'><a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+    <form method="get" class="navbar-form" action="">
+      <input type = "text" name = "dml_type" value=""/>
+      <input type = "submit" value="Search"/>
+      <button type = "submit" name = "Clear" value="Clear"> Clear</button>
+      <div align = 'right'><a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+    
+        <a href="{% url 'home' %}" class="btn btn-danger">Add</a> </div>
+      
+    </form>
 
 </div>
 <body>

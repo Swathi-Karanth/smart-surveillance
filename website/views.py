@@ -512,17 +512,34 @@ def shift(request):
         return redirect('login')    
 
 def audit(request):
-    if request.user.is_authenticated and request.user.is_staff == 1:
-        try:
-            records = audit_change_history.objects.all()
-        except Exception as e:
-            print(f"An error occurred: {e}")
-        print(records)
-        return render(request,'audit.html',{'records':records,'links': request.role_links})
-    elif request.user.is_authenticated and request.user.is_staff != 1:
-        messages.success(request, "Warning! Unauthorized Access")
-        return redirect('error_404')
-    else:
-        messages.success(request, "You Must Be Logged in as admin")
-        return redirect('login')
+    try:
+        records = audit_change_history.objects.all()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    print(records)
+    if request.method == "GET":
+            st = request.GET.get('dml_type')
+            st1 = request.GET.get('Clear')
+            print(st)
+            if st1 == 'Clear':
+                st = None
+                return render(request,'staff.html',{'records':records,'links': request.role_links})
+                
+            if st is not None:
+                
+                staffdata = audit_change_history.objects.filter(dml_type__icontains=st)
+                # the subquery is useful because it allows you to filter the staffdata queryset by both the STAFF_NAME 
+                # and EMPLOYEE_ID columns. This is useful because it allows you to find all records
+                #  where the STAFF_NAME column contains the search term, even if the search term is only a partial match.
+                print(staffdata)
+                data = {
+                        'stdata' : staffdata
+                    }
+                return render(request,'audit.html',{'records':staffdata,'links': request.role_links})
+            elif st1 == 'Clear':
+                # st = None
+                # return render(request,'staff.html',{'records':records})
+                return redirect('audit.html')
+    return render(request,'audit.html',{'records':records,'links': request.role_links})
+    
     
