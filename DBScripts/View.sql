@@ -1,3 +1,4 @@
+
 create or replace view staff_master_view as
 SELECT STAFF_ID,
     STAFF_NAME,
@@ -13,5 +14,11 @@ SELECT STAFF_ID,
     PASSWORD,
     STAFF_ROLE_ID,
     roles.role_name
-FROM campus_surveillance.staff_master, campus_surveillance.roles
-WHERE staff_master.STAFF_ROLE_ID= roles.role_id;
+FROM campus_surveillance.staff_master INNER JOIN campus_surveillance.roles
+ON staff_master.STAFF_ROLE_ID= roles.role_id;
+
+---------------------------------------------------------------------------------------------------
+
+create view footage_view as
+select FOOTAGE_ID , recorded_date ,video_folder,video, cctv.cctv_location,cctv.CCTV_ID 
+from footage INNER JOIN cctv on cctv.cctv_id = footage.cctv_id

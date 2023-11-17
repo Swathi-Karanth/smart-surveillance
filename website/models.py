@@ -117,22 +117,26 @@ class cctv(models.Model):
     class Meta:
         db_table = 'cctv'
 
-class footage(models.Model):
-    FOOTAGE_ID = models.AutoField(primary_key=True)
-    START_TIMESTAMP = models.TimeField()
-    END_TIMESTAMP = models.TimeField()
-    video_folder = models.CharField(max_length=50)
-    CCTV_ID =models.ForeignKey('CCTV',on_delete=models.CASCADE)
-    class Meta:
-        db_table = 'footage'
+# class footage(models.Model):
+#     FOOTAGE_ID = models.AutoField(primary_key=True)
+#     START_TIMESTAMP = models.TimeField()
+#     END_TIMESTAMP = models.TimeField()
+#     video_folder = models.CharField(max_length=50)
+#     CCTV_ID =models.ForeignKey('CCTV',on_delete=models.CASCADE)
+#     class Meta:
+#         db_table = 'footage'
 
 class footage_view(models.Model):
     FOOTAGE_ID = models.AutoField(primary_key=True)
-    START_TIMESTAMP = models.TimeField()
-    END_TIMESTAMP = models.TimeField()
+    recorded_date = models.DateTimeField()
     video_folder = models.CharField(max_length=50)
-    CCTV_ID =models.ForeignKey('CCTV',on_delete=models.CASCADE)
-    FOLDER = models.CharField(max_length=50)
+    video = models.BinaryField()
+    CCTV =models.ForeignKey('CCTV',on_delete=models.CASCADE)
+    cctv_location = models.CharField(max_length = 50)
+    class Meta:
+        db_table = 'footage_view'
+
+    
 
 class shift_master(models.Model):
     SHIFT_ID = models.AutoField(primary_key=True) 

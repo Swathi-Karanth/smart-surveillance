@@ -4,15 +4,15 @@ from django.db import connection
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import AddRecordForm_staff, LoginForm, SignUpForm, AddRecordForm,AddRecordForm_role,addrecord_visitor
-from .models import EMERGENCY_CONTACTS, Record, staff_master,visitor_ledger,incidents,staff_master_view,duty_roster,shift_master,audit_change_history
+from .models import EMERGENCY_CONTACTS, Record, footage_view, staff_master,visitor_ledger,incidents,staff_master_view,duty_roster,shift_master,audit_change_history
 from .models import Roles
 from .forms import AddRecordForm,LoginForm,addincidents_form
 from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
 from django.db.models import Subquery
 from django.db.models import Q
+import base64
 import django
-
 
 
 links = [
@@ -405,21 +405,25 @@ def cctv_page(request):
             for record in r:
                 data= {}
                 data["FOOTAGE_ID"] = record[0]
-                data["START_TIMESTAMP"] = record[1]
-                data["END_TIMESTAMP"] = record[2]
-                data["FOLDER"] = record[3]
-                data["CCTV_ID"] = record[4]
-                data["FOLDER"] = record[5]
+                data["recorded_date"] = record[1]
+                data["video_folder"] = record[2]
+                data["video"] = record[3]
+                data["cctv_location"] = record[4]
+                data["CCTV_ID"] = record[5]
+                
                 records.append(data)
 
-        return render(request,'cctv.html',{'records':records,'links': request.role_links})
+        return render(request,'footage.html',{'records':records,'links': request.role_links})
     else:
         messages.success(request, "Warning! Unauthorized Access")
         return redirect('error_404')
 
-def play_video(request):
+def play_video(request,pk):
     if request.user.is_authenticated and request.user.is_staff == 1:
-        return render(request, 'play_video.html', {'links': request.role_links})
+        video = footage_view.objects.get(FOOTAGE_ID=pk)
+        print(video)
+        encoded_video = base64.b64encode(video.video).decode('utf-8')
+        return render(request, 'play_video.html', {'links': request.role_links,'video':encoded_video})
     else:
         messages.success(request, "Warning! Unauthorized Access")
         return redirect('error_404')
