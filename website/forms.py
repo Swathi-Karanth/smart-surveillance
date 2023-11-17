@@ -69,7 +69,7 @@ class AddRecordForm_staff(forms.ModelForm):
 
 	EMPLOYEE_ID = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Employee ID", "class":"form-control"}), label="Employee ID")
 
-	PASSWORD = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Password", "class":"form-control"}), label="Password")
+	PASSWORD = forms.CharField(required=False, widget=forms.widgets.TextInput(attrs={"placeholder":"Password", "class":"form-control"}), label="Password")
 	
 	# STAFF_ROLE_ID = forms.IntegerField(required=True, widget=forms.widgets.TextInput(attrs={"class":"form-control"}), label="Role ID")
 	

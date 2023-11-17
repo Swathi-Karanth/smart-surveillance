@@ -144,8 +144,8 @@ class shift_master(models.Model):
 
 class duty_roster(models.Model):
     STAFF_SHIFT = models.AutoField(primary_key=True,db_column='STAFF_SHIFT_ID') 
-    STAFF = models.ForeignKey('staff_master',on_delete=models.CASCADE)
-    SHIFT = models.ForeignKey('shift_master',on_delete=models.CASCADE)
+    STAFF = models.ForeignKey('staff_master',on_delete=models.CASCADE, db_column='STAFF_ID')
+    SHIFT = models.ForeignKey('shift_master',on_delete=models.CASCADE, db_column='SHIFT_ID')
     START_DATE_TIME = models.DateTimeField()
     END_DATE_TIME =  models.DateTimeField()
     class Meta:

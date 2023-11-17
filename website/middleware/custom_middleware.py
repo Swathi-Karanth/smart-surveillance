@@ -20,7 +20,7 @@ class RoleMiddleware:
                         {'v': 'visitor','title': 'Visitor Log', 'url': '/visitor_ledger/'},
                         {'i': 'incident','title': 'Incident History', 'url': '/incidents/'},
                         {'c': 'cctv','title': 'CCTV Footages', 'url': '/cctv_page/'},
-                        {'p': 'call_mysql_procedure','title': 'Procedures', 'url': '/call_mysql_procedure/'},
+                        {'p': 'call_mysql_procedure','title': 'Staff stats (Procedures)', 'url': '/call_mysql_procedure/'},
                         {'p': 'duty','title': 'Duty Roster', 'url': '/duty/'},
                         {'sh': 'shift','title': 'Shift Master', 'url': '/shift/'},
                         {'a': 'audit','title': 'Audit Table', 'url': '/audit/'},

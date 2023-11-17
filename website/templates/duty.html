@@ -44,6 +44,7 @@
   <thead class="table-dark">
     <tr>
       <th scope="col">STAFF_SHIFT_ID</th>
+      <th scope="col">STAFF NAME</th>
       <th scope="col">STAFF_ID</th>
       <th scope="col">SHIFT_ID</th>
       <th scope="col">START_DATE_TIME</th>
@@ -57,6 +58,7 @@
         <tr>
           <td>{{ record.STAFF_SHIFT }}</td>
           <td>{{ record.STAFF }}</td>
+          <td>{{ record.STAFF.STAFF_ID }}</td>
           <td>{{ record.SHIFT.SHIFT_ID }}</td>
           <td>{{ record.START_DATE_TIME }}</td>
           <td>{{ record.END_DATE_TIME }}</td>

@@ -62,7 +62,6 @@ def home(request):
 def logout_user(request):
     logout(request)
     messages.success(request, "You Have Been Logged Out...")
-    print(request.user, request.user.is_staff)	
     return redirect('login')
 
 def register_user(request):
@@ -105,14 +104,12 @@ def e_contact(request):
             if request.method == "GET":
                 st = request.GET.get('type')
                 st1 = request.GET.get('Clear')
-                print(st)
                 if st1 == 'Clear':
                     st = None
                     return render(request,'e_contact.html',{'records':records,'links': request.role_links})
                     
                 if st is not None:
                     e = EMERGENCY_CONTACTS.objects.filter(type__icontains = st)
-                    print(e)
                     data = {
                             'stdata' : e
                         }
@@ -219,11 +216,11 @@ def update_contacts(request,pk):
 def staff(request):
     if request.user.is_authenticated and request.user.is_staff == 1:
         records = staff_master_view.objects.all()
-        print(records)
+        # print(records)
         if request.method == "GET":
             st = request.GET.get('STAFF_NAME')
             st1 = request.GET.get('Clear')
-            print(st)
+            # print(st)
             if st1 == 'Clear':
                 st = None
                 return render(request,'staff.html',{'records':records,'links': request.role_links})
@@ -234,7 +231,7 @@ def staff(request):
                 # the subquery is useful because it allows you to filter the staffdata queryset by both the STAFF_NAME 
                 # and EMPLOYEE_ID columns. This is useful because it allows you to find all records
                 #  where the STAFF_NAME column contains the search term, even if the search term is only a partial match.
-                print(staffdata)
+                # print(staffdata)
                 data = {
                         'stdata' : staffdata
                     }
@@ -261,6 +258,9 @@ def update_staff(request, pk):
             if form.is_valid():
                 form.save()
                 return redirect('staff')
+            else:
+                messages.success(request, "Error Updating Record... Retry...")
+                return render(request, 'update_staff.html', {'form': form, 'pk': pk, 'links': request.role_links})
     else:
         messages.success(request, "Warning! Unauthorized Access")
         return redirect('error_404')
@@ -340,7 +340,7 @@ def add_visitor(request):
 def incident(request):
     if request.user.is_authenticated:
         records = incidents.objects.all()
-        print(records)
+        # print(records)
         return render(request,'incidents.html',{'records':records,'links': request.role_links})
     else:
         messages.success(request, "You Must Be Logged In...")
@@ -433,61 +433,91 @@ def update_visitor(request, pk):
 
 
 def profile(request,pk):
-    if request.user.is_authenticated:
-        print(pk)
+    if request.user.is_authenticated and pk == request.user.username:
+        # print(pk)
         records = staff_master.objects.get(USERNAME = pk)
-        print(records)  
+        # print(records)  
         return render(request,'profile.html',{'records':records,'links': request.role_links})
+    elif request.user.is_authenticated and pk != request.user.username:
+        messages.success(request, "Wrong Profile...")  
+        return redirect('home') 
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('login')
 
 def call_mysql_procedure(request):
-    if request.method == 'POST':
-        param1 = request.POST.get('join_from_date')
-        param2 = request.POST.get('join_to_date')
-        param3 = request.POST.get('age_condition')
-        param4 = request.POST.get('age_range_from')
-        param5 = request.POST.get('age_range_to')
+    if request.user.is_authenticated and request.user.is_staff == 1:
+        if request.method == 'POST':
+            param1 = request.POST.get('join_from_date')
+            param2 = request.POST.get('join_to_date')
+            param3 = request.POST.get('age_condition')
+            param4 = request.POST.get('age_range_from')
+            param5 = request.POST.get('age_range_to')
 
-        param1 = None if param1.lower() == '' else param1
-        param2 = None if param2.lower() == '' else param2
-        param3 = None if param3.lower() == '' else param3
-        param4 = None if param4.lower() == '' else param4
-        param5 = None if param5.lower() == '' else param5
+            param1 = None if param1.lower() == '' else param1
+            param2 = None if param2.lower() == '' else param2
+            param3 = None if param3.lower() == '' else param3
+            param4 = None if param4.lower() == '' else param4
+            param5 = None if param5.lower() == '' else param5
 
-        with connection.cursor() as cursor:
-            cursor.callproc('staff_data_analysis', [param1, param2,param3,param4,param5])
-            # If your stored procedure returns results, fetch them
-            result_set = cursor.fetchall()
-            records = []
-            for record in result_set:
-                data= {}
-                data["STAFF_ID"] = record[0]
-                data["STAFF_NAME"] = record[1]
-                data["USERNAME"] = record[2]
-                data["GENDER"] = record[3]
-                data["DOB"] = record[4]
-
-                records.append(data)
-                
-            return render(request, 'procedure.html',{'records':records,'links': request.role_links})
-    return render(request, 'procedure.html',{'links': request.role_links})
+            with connection.cursor() as cursor:
+                cursor.callproc('staff_data_analysis', [param1, param2,param3,param4,param5])
+                # If your stored procedure returns results, fetch them
+                result_set = cursor.fetchall()
+                records = []
+                for record in result_set:
+                    data= {}
+                    data["STAFF_ID"] = record[0]
+                    data["STAFF_NAME"] = record[1]
+                    data["USERNAME"] = record[2]
+                    data["GENDER"] = record[3]
+                    data["DOB"] = record[4]
+                    print(record)
+                    records.append(data)
+                    
+                return render(request, 'procedure.html',{'records':records,'links': request.role_links})
+        return render(request, 'procedure.html',{'links': request.role_links})
+    elif request.user.is_authenticated and request.user.is_staff != 1:
+        messages.success(request, "Warning! Unauthorized Access")
+        return redirect('error_404')
+    else:
+        messages.success(request, "You Must Be Logged in as admin")
+        return redirect('login')
 
 def duty(request):
-    records = duty_roster.objects.all()
-    return render(request,'duty.html',{'records':records,'links': request.role_links})
+    if request.user.is_authenticated and request.user.is_staff == 1:
+        records = duty_roster.objects.all()
+        return render(request,'duty.html',{'records':records,'links': request.role_links})
+    elif request.user.is_authenticated and request.user.is_staff != 1:
+        messages.success(request, "Warning! Unauthorized Access")
+        return redirect('error_404')
+    else:
+        messages.success(request, "You Must Be Logged in as admin")
+        return redirect('login')
 
 def shift(request):
-    records = shift_master.objects.all()
-    return render(request,'shift.html',{'records':records,'links': request.role_links})
-    
+    if request.user.is_authenticated and request.user.is_staff == 1:    
+        records = shift_master.objects.all()
+        return render(request,'shift.html',{'records':records,'links': request.role_links})
+    elif request.user.is_authenticated and request.user.is_staff != 1:
+        messages.success(request, "Warning! Unauthorized Access")
+        return redirect('error_404')
+    else:
+        messages.success(request, "You Must Be Logged in as admin")
+        return redirect('login')    
 
 def audit(request):
-    try:
-        records = audit_change_history.objects.all()
-    except Exception as e:
-        print(f"An error occurred: {e}")
-    print(records)
-    return render(request,'audit.html',{'records':records,'links': request.role_links})
+    if request.user.is_authenticated and request.user.is_staff == 1:
+        try:
+            records = audit_change_history.objects.all()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+        print(records)
+        return render(request,'audit.html',{'records':records,'links': request.role_links})
+    elif request.user.is_authenticated and request.user.is_staff != 1:
+        messages.success(request, "Warning! Unauthorized Access")
+        return redirect('error_404')
+    else:
+        messages.success(request, "You Must Be Logged in as admin")
+        return redirect('login')
     
