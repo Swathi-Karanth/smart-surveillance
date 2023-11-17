@@ -100,7 +100,6 @@ BEGIN
         new_row_data,
         dml_type,
         dml_timestamp,
-        dml_created_by,
 		audit_table_name
     )
     VALUES(
@@ -121,7 +120,6 @@ BEGIN
 		null,
         'DELETE',
         CURRENT_TIMESTAMP,
-        @logged_user,
 		'STAFF_MASTER'
     );
 END //

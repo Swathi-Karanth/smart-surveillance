@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
 from django.db.models import Subquery
 from django.db.models import Q
+import django
 
 
 
@@ -273,12 +274,16 @@ def add_staff(request):
                 add_record = form.save()
                 messages.success(request, "Record Added...")
                 record = staff_master.objects.get(pk=add_record.pk)  
-                column1_value = record.STAFF_NAME.replace(" ","") + str(record.STAFF_ID)
-                column2_value = record.PASSWORD
                 column3_value = record.STAFF_ROLE
                 
-                user = User.objects.create_user(username=column1_value, password=column2_value)
-                user.save()
+                if record.PASSWORD is not django.db.models.fields.AutoField:
+                    column1_value = record.STAFF_NAME.replace(" ","") + str(record.STAFF_ID)
+                    column2_value = record.PASSWORD
+                    user = User.objects.create_user(username=column1_value, password=column2_value)
+                    user.save()
+                    
+                    staff_master.objects.filter(pk = record.STAFF_ID).update(USERNAME = column1_value)
+                    
                 return redirect('home')
         return render(request, 'add_record.html', {'form':form, 'links': request.role_links})
     else:

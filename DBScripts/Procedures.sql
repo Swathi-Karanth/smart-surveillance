@@ -21,7 +21,7 @@ age_condition varchar(10), age_range_from int, age_range_to int)
 begin
 IF age_condition ='MAX' then
 
-SELECT STAFF_ID, STAFF_NAME,USERNAME, GENDER, DOB
+SELECT STAFF_ID, STAFF_NAME, GENDER, DOB, TIMESTAMPDIFF(YEAR, DOB, CURDATE()) as AGE
 FROM staff_master
 WHERE DOB = (
     SELECT MIN(DOB)
@@ -31,7 +31,7 @@ END IF;
 
 IF age_condition ='MIN' then
 
-SELECT STAFF_ID, STAFF_NAME, USERNAME,GENDER, DOB
+SELECT STAFF_ID, STAFF_NAME,GENDER, DOB, TIMESTAMPDIFF(YEAR, DOB, CURDATE()) as AGE
 FROM staff_master
 WHERE DOB = (
     SELECT MAX(DOB)
