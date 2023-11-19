@@ -90,8 +90,7 @@ ALTER TABLE EMERGENCY_CONTACTS AUTO_INCREMENT=100;
 CREATE TABLE CCTV(
 CCTV_ID INT PRIMARY KEY,
 CCTV_LOCATION VARCHAR(50),
-MODEL VARCHAR(50),
-FOLDER VARCHAR(50)
+MODEL VARCHAR(50)
 );
 
 ALTER TABLE CCTV AUTO_INCREMENT=100;
@@ -123,4 +122,10 @@ GRANT SELECT ON campus_surveillance.incidents TO 'MichaelJohnson'@'localhost';
 REVOKE INSERT ON campus_surveillance.incidents FROM 'MichaelJohnson'@'localhost';
 
 
+-- sample video insert query with longblob
 
+-- INSERT INTO footage (video_folder, recorded_date, video,CCTV_ID) 
+-- values ('E:\DUMPYARD\PESU Files\Semester 5\DBMS\MiniProject\code_start\SmartSurveillance_mySQL\SmartSurveillance_mySQL\Django-CRM-main\website\cctv_footage_sample',
+-- SYSDATE(),
+-- LOAD_FILE("E:\DUMPYARD\PESU Files\Semester 5\DBMS\MiniProject\code_start\SmartSurveillance_mySQL\SmartSurveillance_mySQL\Django-CRM-main\website\cctv_footage_sample\vid2.mp4"),
+-- 101);
