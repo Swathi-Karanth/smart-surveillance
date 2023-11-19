@@ -79,6 +79,7 @@ call AUDITLOGREPORT('ROLES','2023-10-28','2023-10-28')
 
 ------------------------------------------------------------------------------------------------------------------
 
+-- SALARY GENERATION PROCEDURE
 DELIMITER //
 
 CREATE PROCEDURE calculate_salary(p_staff_id INT,  p_MONTH VARCHAR(50),  p_YEAR VARCHAR(50))
