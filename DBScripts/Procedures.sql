@@ -50,7 +50,7 @@ end if;
 
 if join_from_date is not null and  join_to_date is not null then
 
-SELECT STAFF_ID, STAFF_NAME, USERNAME,GENDER, DOB, date(JOINING_DATE) as joindate
+SELECT STAFF_ID, STAFF_NAME,GENDER, DOB, TIMESTAMPDIFF(YEAR, DOB, CURDATE()) as age,date(JOINING_DATE) as joindate
 FROM staff_master
 where 
  date(JOINING_DATE) >= STR_TO_DATE(join_from_date , "%Y-%m-%d")
@@ -59,7 +59,6 @@ order by date(JOINING_DATE);
 end if;
 
 END //
-
 --------------------------------------------------------------------------------------------------------------
 
 --AUDITQUERYPROCEDURE

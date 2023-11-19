@@ -406,10 +406,10 @@ def cctv_page(request):
                 data= {}
                 data["FOOTAGE_ID"] = record[0]
                 data["recorded_date"] = record[1]
-                data["video_folder"] = record[2]
-                data["video"] = record[3]
-                data["cctv_location"] = record[4]
-                data["CCTV_ID"] = record[5]
+                # data["video_folder"] = record[2]
+                data["video"] = record[2]
+                data["cctv_location"] = record[3]
+                data["CCTV_ID"] = record[4]
                 
                 records.append(data)
 
@@ -478,9 +478,9 @@ def call_mysql_procedure(request):
                     data= {}
                     data["STAFF_ID"] = record[0]
                     data["STAFF_NAME"] = record[1]
-                    data["USERNAME"] = record[2]
-                    data["GENDER"] = record[3]
-                    data["DOB"] = record[4]
+                    data["GENDER"] = record[2]
+                    data["DOB"] = record[3]
+                    data["AGE"] = record[4]
                     print(record)
                     records.append(data)
                     

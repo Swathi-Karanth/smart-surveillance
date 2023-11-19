@@ -52,7 +52,7 @@
     <tr>
       <th scope="col">FOOTAGE_ID</th>
       <th scope="col"> recorded_date</th>
-      <th scope="col">video_folder</th>
+      <!-- <th scope="col">video_folder</th> -->
       <th scope="col">cctv_location</th>
       <th scope="col">CCTV_ID</th>
       
@@ -64,7 +64,7 @@
         <tr>
            <td> <a href="{% url 'play_video' record.FOOTAGE_ID%}">{{ record.FOOTAGE_ID }}</a></td>
           <td>{{ record.recorded_date }}</td>
-          <td>{{ record.video_folder }}</td>
+          <!-- <td>{{ record.video_folder }}</td> -->
           <td>{{ record.cctv_location }}</td>
           
           <td>{{ record.CCTV_ID }}</td>

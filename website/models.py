@@ -129,7 +129,7 @@ class cctv(models.Model):
 class footage_view(models.Model):
     FOOTAGE_ID = models.AutoField(primary_key=True)
     recorded_date = models.DateTimeField()
-    video_folder = models.CharField(max_length=50)
+    # video_folder = models.CharField(max_length=50)
     video = models.BinaryField()
     CCTV =models.ForeignKey('CCTV',on_delete=models.CASCADE)
     cctv_location = models.CharField(max_length = 50)

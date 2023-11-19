@@ -20,5 +20,5 @@ ON staff_master.STAFF_ROLE_ID= roles.role_id;
 ---------------------------------------------------------------------------------------------------
 
 create view footage_view as
-select FOOTAGE_ID , recorded_date ,video_folder,video, cctv.cctv_location,cctv.CCTV_ID 
+select FOOTAGE_ID , recorded_date ,video, cctv.cctv_location,cctv.CCTV_ID 
 from footage INNER JOIN cctv on cctv.cctv_id = footage.cctv_id
