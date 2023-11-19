@@ -68,6 +68,10 @@
       <th scope="col">Password</th>
       <th scope="col">Role ID</th>
       <th scope="col">Role Name</th>
+      <th scope="col">BASIC_SALARY</th>
+      <th scope="col">HRA</th>
+      <th scope="col">PF</th>
+      <th scope="col">TAX_RATE</th>
       <th scope="col"></th>
       <th scope="col"></th>
     </tr>
@@ -90,6 +94,12 @@
           <td>{{ record.PASSWORD }}</td>
           <td>{{ record.STAFF_ROLE_ID }}</td>
           <td>{{ record.ROLE_NAME }}</td>
+          <td>{{ record.BASIC_SALARY }}</td>
+          <td>{{ record.HRA }}</td>
+          <td>{{ record.PF }}</td>
+          <td>{{ record.TAX_RATE }}</td>
+          
+
           
           <td><a href="{% url 'update_staff' pk=record.STAFF_ID %}" class="btn btn-secondary">EDIT</a></td>
           <td><a href="{% url 'delete_staff' record.STAFF_ID %}" class="btn btn-danger">Delete</a></td>

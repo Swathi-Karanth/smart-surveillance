@@ -71,11 +71,16 @@ class AddRecordForm_staff(forms.ModelForm):
 
 	PASSWORD = forms.CharField(required=False, widget=forms.widgets.TextInput(attrs={"placeholder":"Password", "class":"form-control"}), label="Password")
 	
+	BASIC_SALARY = forms.IntegerField(required=True,widget=forms.widgets.TextInput(attrs={ "class":"form-control"}))
+	HRA = forms.IntegerField(required=True,widget=forms.widgets.TextInput(attrs={ "class":"form-control"}))
+	PF = forms.IntegerField(required=True,widget=forms.widgets.TextInput(attrs={ "class":"form-control"}))
+	TAX_RATE = forms.IntegerField(required=True,widget=forms.widgets.TextInput(attrs={ "class":"form-control"}))
+	
 	# STAFF_ROLE_ID = forms.IntegerField(required=True, widget=forms.widgets.TextInput(attrs={"class":"form-control"}), label="Role ID")
 	
 	class Meta:
 		model = staff_master
-		fields = ("STAFF_NAME","GENDER","DOB","MOBILE_NO","EMAIL_ID","JOINING_DATE","LEAVING_DATE","ACTIVE_STATUS","EMPLOYEE_ID","PASSWORD","STAFF_ROLE")
+		fields = ("STAFF_NAME","GENDER","DOB","MOBILE_NO","EMAIL_ID","JOINING_DATE","LEAVING_DATE","ACTIVE_STATUS","EMPLOYEE_ID","PASSWORD","STAFF_ROLE","BASIC_SALARY","HRA","PF","TAX_RATE")
 
 class AddRecordForm_role(forms.ModelForm):
 	# role_id = forms.IntegerField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"type", "class":"form-control"}), label="Role ID")

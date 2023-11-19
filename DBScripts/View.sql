@@ -13,6 +13,10 @@ SELECT STAFF_ID,
     EMPLOYEE_ID,
     PASSWORD,
     STAFF_ROLE_ID,
+    BASIC_SALARY 	,
+HRA	,
+PF	,
+TAX_RATE ,
     roles.role_name
 FROM campus_surveillance.staff_master INNER JOIN campus_surveillance.roles
 ON staff_master.STAFF_ROLE_ID= roles.role_id;

@@ -77,4 +77,99 @@ END //
 --test case
 call AUDITLOGREPORT('ROLES','2023-10-28','2023-10-28')
 
+------------------------------------------------------------------------------------------------------------------
 
+DELIMITER //
+
+CREATE PROCEDURE calculate_salary(p_staff_id INT,  p_MONTH VARCHAR(50),  p_YEAR VARCHAR(50))
+BEGIN
+    DECLARE L_basic_salary INT;
+    DECLARE L_hra INT;
+    DECLARE L_pf INT;
+    DECLARE L_tax_rate INT;
+    DECLARE unpaid_leaves INT;
+    DECLARE l_net_salary FLOAT;
+	DECLARE p_record_exists INT;
+    DECLARE taxable_income FLOAT;
+    DECLARE pf_deduction FLOAT;
+   DECLARE tax_deduction FLOAT;
+    -- Declare variables for exception handling
+    DECLARE error_occurred BOOLEAN DEFAULT FALSE;
+    DECLARE error_code INT;
+    DECLARE error_message VARCHAR(255);
+
+    -- Exception handling
+    DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SET error_occurred = TRUE;
+        GET DIAGNOSTICS CONDITION 1
+            error_code = MYSQL_ERRNO, error_message = MESSAGE_TEXT;
+        SELECT CONCAT('Error ', error_code, ': ', error_message) AS error;
+    END;
+
+
+    -- Get salary details
+    SELECT basic_salary, hra, pf, tax_rate
+    INTO L_basic_salary, L_hra, L_pf, L_tax_rate
+    FROM STAFF_MASTER
+    WHERE STAFF_ID = p_staff_id;
+
+
+SELECT L_basic_salary, L_hra, L_pf, L_tax_rate;
+-- take uplaid leaves
+
+
+select unpaid_leave INTO unpaid_leaves from STAFF_LEAVE_DETAILS   
+WHERE STAFF_ID = p_staff_id and leave_month = p_month and leave_year = p_year ;
+
+IF unpaid_leaves IS NULL THEN 
+	SET unpaid_leaves =0;
+END IF;
+
+    SET taxable_income = L_basic_salary + L_hra;
+    SET pf_deduction = (L_pf / 100) * L_basic_salary;
+    SET tax_deduction = (L_tax_rate / 100) * taxable_income;
+
+SELECT 'xx';
+SELECT taxable_income,pf_deduction,tax_deduction ;
+
+    -- Calculate net salary considering unpaid leaves
+    SET l_net_salary = (L_basic_salary + L_hra) - (pf_deduction + tax_deduction);
+
+select l_net_salary;
+
+	if unpaid_leaves > 0 then
+		SET l_net_salary = net_salary - ((L_basic_salary + L_hra) / 30) * unpaid_leaves;
+	end if;
+    
+    -- SET l_net_salary = ROUND(l_net_salary,0); 
+    SET p_record_exists = 0;
+
+	
+    SELECT COUNT(1) INTO p_record_exists from STAFF_SALARY_DETAILS
+   where  STAFF_ID = p_staff_id and salary_month = p_month and salary_year = p_year ;
+  
+   
+   
+ if p_record_exists = 0 then
+ 	INSERT INTO  STAFF_SALARY_DETAILS (STAFF_ID,SALARY_MONTH, SALARY_YEAR, NET_SALARY)
+ 	VALUES (p_staff_id, p_MONTH, p_YEAR,  ROUND(l_net_salary));
+ 
+ 	
+    elseif p_record_exists = 1 then
+      update STAFF_SALARY_DETAILS
+      set net_salary = ROUND(l_net_salary)
+      where STAFF_ID = p_staff_id and salary_month = p_month and salary_year = p_year ;
+
+	end if; 
+IF error_occurred THEN
+        ROLLBACK; -- Rollback any changes in case of an error
+	
+    ELSE
+        COMMIT;   -- Commit changes if no error occurred
+   END IF;
+
+END //
+
+--testcase
+call calculate_salary(100,'NOV','2023')

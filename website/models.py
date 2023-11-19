@@ -49,6 +49,10 @@ class staff_master(models.Model):
     EMPLOYEE_ID = models.CharField(max_length=20)
     PASSWORD = models.CharField(max_length=20,db_column="PASSWORD")
     STAFF_ROLE = models.ForeignKey('Roles', on_delete=models.CASCADE)
+    BASIC_SALARY = models.IntegerField()
+    HRA	= models.IntegerField()
+    PF	= models.IntegerField()
+    TAX_RATE = models.IntegerField()
 
     def __str__(self) -> str:
         return self.STAFF_NAME
@@ -105,6 +109,10 @@ class staff_master_view(models.Model):
     PASSWORD = models.CharField(max_length=20,db_column="PASSWORD")
     STAFF_ROLE_ID = models.IntegerField()
     ROLE_NAME = models.CharField(max_length=255)
+    BASIC_SALARY = models.IntegerField()
+    HRA	= models.IntegerField()
+    PF	= models.IntegerField()
+    TAX_RATE = models.IntegerField()
     class Meta:
         managed = False 
         db_table = "staff_master_view"
